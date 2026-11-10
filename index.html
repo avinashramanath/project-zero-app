@@ -805,18 +805,43 @@
         margin-top: 12px !important;
       }
       .cloud-status {
-        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        width: fit-content;
+        margin-top: 7px;
+        padding: 4px 9px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
         color: var(--muted);
-        font-size: 11px;
-        text-align: right;
+        font-size: 10px;
+        font-weight: 700;
+        line-height: 1.4;
+      }
+      .cloud-status::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        flex: 0 0 8px;
+        border-radius: 50%;
+        background: var(--orange);
       }
       .cloud-status.error {
         color: var(--red);
+        border-color: #f4d8df;
+        background: #fff8fa;
       }
-      @media (max-width: 700px) {
-        .cloud-status {
-          text-align: left;
-        }
+      .cloud-status.error::before {
+        background: var(--red);
+      }
+      .cloud-status.success {
+        color: var(--green);
+        border-color: #ccefe1;
+        background: #f5fcf9;
+      }
+      .cloud-status.success::before {
+        background: var(--green);
       }
 
       .loan-detail-mode #view-loandetail {
@@ -1257,11 +1282,11 @@
           <div>
             <h1>PROJECT ZERO</h1>
             <p>PERSONAL DEBT TRACKER</p>
+            <div class="cloud-status" id="cloudStatus" role="status" aria-live="polite">Connecting to cloud…</div>
           </div>
         </div>
         <div class="actions">
           <button id="export">↓ Export backup</button><button class="primary" id="addKitty">＋ Loan Kitty</button>
-          <div class="cloud-status" id="cloudStatus" role="status" aria-live="polite">Connecting to cloud…</div>
         </div>
       </header>
       <section class="stats sticky-stats">
@@ -1518,6 +1543,7 @@
         let status = document.getElementById("cloudStatus");
         status.textContent = message;
         status.classList.toggle("error", isError);
+        status.classList.toggle("success", !isError && /loaded|saved/i.test(message));
       }
       function setGate(title, message, allowMigration = false, note = "") {
         document.getElementById("loadTitle").textContent = title;
