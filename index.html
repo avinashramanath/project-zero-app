@@ -1479,10 +1479,15 @@
       }
       function monthlyRemaining() {
         const unpaid = monthRows(db.monthCursor).filter((p) => !p.paid);
+        const now = new Date();
+        const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
         const dueDates = [...new Set(unpaid.map((p) => p.dueDate))]
           .sort()
           .map((date) => {
-            const label = new Date(date + "T12:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+            const [year, month, day] = date.split("-").map(Number);
+            const daysUntil = Math.round((Date.UTC(year, month - 1, day) - today) / 86400000);
+            const label =
+              daysUntil === 0 ? "Today" : daysUntil === 1 ? "Tomorrow" : daysUntil > 1 ? `In ${daysUntil} days` : `${Math.abs(daysUntil)} days overdue`;
             const count = unpaid.filter((p) => p.dueDate === date).length;
             return count > 1 ? `${label} ×${count}` : label;
           });
