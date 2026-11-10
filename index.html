@@ -1,0 +1,3207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="theme-color" content="#f7f8fc" />
+    <meta name="description" content="Project Zero debt tracker" />
+    <title>Project Zero | Debt Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #f6f7fb;
+        --paper: #fff;
+        --ink: #20243a;
+        --muted: #747b91;
+        --line: #e9ebf2;
+        --purple: #7357e8;
+        --purple2: #eeeaff;
+        --mint: #dff7ed;
+        --green: #1c9b70;
+        --amber: #fff2d7;
+        --orange: #db8b25;
+        --pink: #ffe8ef;
+        --red: #d95b78;
+        --blue: #e6f2ff;
+        --shadow: 0 8px 28px rgba(38, 42, 78, 0.06);
+        --r: 20px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          14px/1.5 Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          sans-serif;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--ink);
+        padding: 10px 14px;
+        border-radius: 12px;
+        font-weight: 700;
+      }
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow);
+      }
+      button.primary {
+        background: var(--purple);
+        color: #fff;
+        border-color: var(--purple);
+      }
+      button.soft {
+        background: var(--purple2);
+        color: var(--purple);
+        border-color: transparent;
+      }
+      button.danger {
+        color: var(--red);
+      }
+      .app {
+        max-width: 1440px;
+        margin: auto;
+        padding: 22px 26px 60px;
+      }
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 24px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .logo {
+        width: 46px;
+        height: 46px;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #8d78f4, #6549dc);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-size: 23px;
+        font-weight: 900;
+        box-shadow: 0 7px 18px #7357e833;
+      }
+      .brand h1 {
+        font-size: 19px;
+        letter-spacing: 0.08em;
+        margin: 0;
+      }
+      .brand p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: 0.12em;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .hero {
+        background: linear-gradient(115deg, #7357e8, #9a86f5);
+        color: #fff;
+        border-radius: 26px;
+        padding: 26px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        box-shadow: 0 15px 35px #7357e82b;
+        margin-bottom: 18px;
+      }
+      .hero .eyebrow {
+        color: #e6e0ff;
+      }
+      .hero h2 {
+        font-size: clamp(26px, 4vw, 38px);
+        line-height: 1.12;
+        margin: 6px 0;
+      }
+      .hero p {
+        margin: 6px 0 0;
+        color: #eeeaff;
+        max-width: 620px;
+      }
+      .hero-score {
+        text-align: right;
+        min-width: 150px;
+      }
+      .hero-score strong {
+        font-size: 30px;
+        display: block;
+      }
+      .hero-score span {
+        font-size: 11px;
+        color: #e6e0ff;
+      }
+      .eyebrow {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-weight: 850;
+        color: var(--purple);
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 13px;
+        margin-bottom: 16px;
+      }
+      .card,
+      .stat {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: var(--r);
+        box-shadow: var(--shadow);
+      }
+      .stat {
+        padding: 17px 19px;
+        min-width: 0;
+      }
+      .stat label {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 750;
+        letter-spacing: 0.04em;
+      }
+      .stat strong {
+        display: block;
+        font-size: clamp(20px, 2.5vw, 29px);
+        letter-spacing: -0.04em;
+        margin: 6px 0 1px;
+        overflow-wrap: anywhere;
+      }
+      .stat small {
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(310px, 0.8fr);
+        gap: 15px;
+        align-items: start;
+      }
+      .card {
+        padding: 19px;
+        min-width: 0;
+      }
+      .head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .head h3 {
+        margin: 0;
+        font-size: 16px;
+      }
+      .head p {
+        margin: 3px 0 0;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .loan-list {
+        display: grid;
+        gap: 10px;
+      }
+      .loan {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px;
+      }
+      .loan-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .loan h4 {
+        font-size: 13px;
+        margin: 0 0 3px;
+      }
+      .loan-meta {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .loan-balance {
+        font-weight: 850;
+        font-size: 16px;
+        white-space: nowrap;
+      }
+      .bar {
+        height: 8px;
+        border-radius: 99px;
+        background: #f0eff7;
+        overflow: hidden;
+        margin: 11px 0 7px;
+      }
+      .bar span {
+        display: block;
+        height: 100%;
+        border-radius: 99px;
+        background: linear-gradient(90deg, #8b79f0, #4ac69b);
+      }
+      .loan-foot {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .tag {
+        display: inline-block;
+        background: var(--amber);
+        color: #9c6816;
+        border-radius: 8px;
+        padding: 3px 7px;
+        font-size: 9px;
+        font-weight: 800;
+        margin-left: 5px;
+      }
+      .tag.ok {
+        background: var(--mint);
+        color: #187c5c;
+      }
+      .target {
+        background: #fbfaff;
+        border: 1px solid #e8e2ff;
+        border-radius: 16px;
+        padding: 16px;
+      }
+      .target h3 {
+        font-size: 17px;
+        margin: 5px 0;
+      }
+      .target .big {
+        font-size: 26px;
+        font-weight: 900;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .tiny {
+        font-size: 11px;
+      }
+      .tabs {
+        display: flex;
+        gap: 7px;
+        overflow: auto;
+        margin: 20px 0 14px;
+        padding-bottom: 4px;
+      }
+      .tab {
+        white-space: nowrap;
+        background: transparent;
+        border-color: transparent;
+        color: var(--muted);
+      }
+      .tab.active {
+        background: var(--purple2);
+        color: var(--purple);
+        border-color: #e5dfff;
+      }
+      .view {
+        display: none;
+      }
+      .view.active {
+        display: block;
+      }
+      .two {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .three {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .chartbox {
+        min-height: 260px;
+      }
+      .chart {
+        width: 100%;
+        height: 230px;
+        display: block;
+      }
+      .donut-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 22px;
+        flex-wrap: wrap;
+        min-height: 220px;
+      }
+      .donut {
+        width: 190px;
+        height: 190px;
+        position: relative;
+      }
+      .donut svg {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+      }
+      .donut-center {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-content: center;
+        text-align: center;
+      }
+      .donut-center strong {
+        font-size: 19px;
+      }
+      .legend {
+        display: grid;
+        gap: 8px;
+        min-width: 150px;
+      }
+      .legend-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+      }
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .checklist {
+        display: grid;
+        gap: 8px;
+      }
+      .check {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+      }
+      .check input {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--purple);
+      }
+      .check-main {
+        flex: 1;
+        min-width: 0;
+      }
+      .check-main b {
+        display: block;
+        font-size: 12px;
+      }
+      .check-main span {
+        font-size: 10px;
+        color: var(--muted);
+      }
+      .check-amount {
+        text-align: right;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .check-amount small {
+        display: block;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .field {
+        display: grid;
+        gap: 5px;
+        margin: 10px 0;
+      }
+      .field label {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 750;
+      }
+      .field input,
+      .field select {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        padding: 10px;
+        background: #fff;
+        color: var(--ink);
+      }
+      .formgrid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0 12px;
+      }
+      .wide {
+        grid-column: 1/-1;
+      }
+      .tablewrap {
+        overflow: auto;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 620px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 11px 9px;
+        border-bottom: 1px solid var(--line);
+        font-size: 11px;
+      }
+      th {
+        color: var(--muted);
+        font-weight: 800;
+      }
+      td b {
+        font-size: 12px;
+      }
+      .notice {
+        background: #f4f1ff;
+        border: 1px solid #e7e0ff;
+        color: #5d4e9c;
+        border-radius: 13px;
+        padding: 12px 14px;
+        font-size: 11px;
+        margin-bottom: 13px;
+      }
+      .notice.warn {
+        background: #fff8e9;
+        border-color: #f7e6bd;
+        color: #89621d;
+      }
+      .empty {
+        padding: 22px;
+        text-align: center;
+        color: var(--muted);
+        border: 1px dashed var(--line);
+        border-radius: 14px;
+      }
+      .modalback {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: #22243b66;
+        z-index: 20;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+      .modal {
+        background: #fff;
+        border-radius: 20px;
+        padding: 20px;
+        width: min(540px, 100%);
+        max-height: 90vh;
+        overflow: auto;
+        box-shadow: 0 20px 70px #17162b44;
+      }
+      .modalhead {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .modal h3 {
+        margin: 0;
+      }
+      .toast {
+        display: none;
+        position: fixed;
+        bottom: 22px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #20243a;
+        color: #fff;
+        padding: 11px 16px;
+        border-radius: 12px;
+        z-index: 30;
+        box-shadow: var(--shadow);
+        font-weight: 750;
+      }
+      .footer {
+        text-align: center;
+        color: var(--muted);
+        font-size: 10px;
+        margin: 24px 0;
+      }
+      .hide {
+        display: none !important;
+      }
+      @media (max-width: 900px) {
+        .stats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        .hero {
+          align-items: flex-start;
+        }
+        .two {
+          grid-template-columns: 1fr;
+        }
+        .three {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 560px) {
+        .app {
+          padding: 13px 12px 45px;
+        }
+        .top {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .actions {
+          width: 100%;
+        }
+        .actions button {
+          flex: 1;
+        }
+        .hero {
+          padding: 20px;
+          flex-direction: column;
+        }
+        .hero-score {
+          text-align: left;
+        }
+        .stats {
+          gap: 8px;
+        }
+        .stat {
+          padding: 13px;
+        }
+        .stat strong {
+          font-size: 21px;
+        }
+        .card {
+          padding: 14px;
+        }
+        .three {
+          grid-template-columns: 1fr 1fr;
+        }
+        .loan-top {
+          flex-direction: column;
+        }
+        .loan-balance {
+          font-size: 15px;
+        }
+        .formgrid {
+          grid-template-columns: 1fr;
+        }
+        .wide {
+          grid-column: auto;
+        }
+      }
+
+      .sticky-stats {
+        position: sticky;
+        top: 0;
+        z-index: 12;
+        padding: 8px 0 10px;
+        background: var(--bg);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        box-shadow: 0 7px 12px -12px #20243a55;
+      }
+      .sticky-stats .stat {
+        padding: 12px 17px;
+        border-radius: 16px;
+      }
+      .sticky-stats .stat strong {
+        font-size: clamp(22px, 2.5vw, 30px);
+        margin: 2px 0;
+      }
+      .loan {
+        cursor: pointer;
+        transition:
+          border-color 0.15s,
+          transform 0.15s;
+      }
+      .loan:hover {
+        border-color: #c7bcff;
+        transform: translateY(-1px);
+      }
+      .loan-open {
+        background: var(--purple2);
+        color: var(--purple);
+        border: 0;
+        padding: 6px 10px;
+        font-size: 11px;
+      }
+      .upcoming-groups {
+        display: grid;
+        gap: 12px;
+      }
+      .upcoming-group {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 11px 13px;
+      }
+      .upcoming-group h4 {
+        margin: 0 0 7px;
+        font-size: 12px;
+        color: var(--purple);
+        display: flex;
+        justify-content: space-between;
+      }
+      .upcoming-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 0;
+        border-top: 1px solid #f0f0f6;
+        font-size: 11px;
+      }
+      .upcoming-row:first-of-type {
+        border-top: 0;
+      }
+      .loan-detail-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+      .loan-detail-title {
+        font-size: 24px;
+        margin: 0;
+      }
+      .detail-metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+      .detail-metric {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px;
+        background: #fff;
+      }
+      .detail-metric small {
+        display: block;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 750;
+      }
+      .detail-metric strong {
+        font-size: 18px;
+        display: block;
+        margin-top: 4px;
+      }
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 14px;
+      }
+      .detail-chart {
+        width: 100%;
+        height: 210px;
+        display: block;
+      }
+      .detail-payment-list {
+        display: grid;
+        gap: 7px;
+      }
+      .detail-payment {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        font-size: 11px;
+      }
+      .detail-payment .paid {
+        color: var(--green);
+        font-weight: 800;
+      }
+      @media (max-width: 700px) {
+        .sticky-stats {
+          top: 0;
+        }
+        .detail-metrics {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .detail-grid {
+          grid-template-columns: 1fr;
+        }
+        .loan-detail-title {
+          font-size: 20px;
+        }
+      }
+      .loan-detail-mode .layout,
+      .loan-detail-mode .tabs,
+      .loan-detail-mode .view:not(#view-loandetail) {
+        display: none !important;
+      }
+      .loan-detail-mode #view-loandetail {
+        display: block !important;
+      }
+      .loan-detail-mode .sticky-stats {
+        top: 0;
+      }
+
+      .load-gate {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        background: #f5f6fb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .load-panel {
+        width: min(520px, 100%);
+        background: #fff;
+        border: 1px solid #e6e8f2;
+        border-radius: 22px;
+        padding: 28px;
+        box-shadow: 0 20px 60px #242a4512;
+      }
+      .load-panel h2 {
+        font-size: 24px;
+        margin: 0 0 8px;
+        color: #252b42;
+      }
+      .load-panel p {
+        font-size: 13px;
+        line-height: 1.6;
+        color: #737b92;
+        margin: 0 0 18px;
+      }
+      .load-panel .primary {
+        width: 100%;
+        padding: 13px;
+      }
+      .load-note {
+        font-size: 11px !important;
+        margin-top: 12px !important;
+      }
+      .cloud-status {
+        width: 100%;
+        color: var(--muted);
+        font-size: 11px;
+        text-align: right;
+      }
+      .cloud-status.error {
+        color: var(--red);
+      }
+      @media (max-width: 700px) {
+        .cloud-status {
+          text-align: left;
+        }
+      }
+
+      .loan-detail-mode #view-loandetail {
+        max-width: 1080px;
+        margin: 0 auto;
+      }
+      .loan-detail-mode .app {
+        max-width: 1120px;
+      }
+      .forecast-wrap {
+        margin-top: 14px;
+      }
+      .forecast-input {
+        max-width: none;
+        background: linear-gradient(135deg, #f2efff, #fbfaff);
+        border: 1px solid #ded6ff;
+        border-radius: 18px;
+        padding: 18px;
+      }
+      .forecast-input label {
+        font-size: 12px !important;
+        color: #6552b6 !important;
+      }
+      .forecast-input input {
+        max-width: 420px;
+        background: #fff;
+        border: 2px solid #cfc4ff;
+        font-size: 28px;
+        padding: 13px 15px;
+      }
+      .forecast-input .hero-note {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+      .forecast-input input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 800;
+      }
+      .forecast-calc-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .forecast-calc-row button {
+        min-width: 140px;
+      }
+      .forecast-chart {
+        height: auto;
+        min-height: 320px;
+      }
+      .forecast-plot {
+        padding: 12px;
+        background: linear-gradient(180deg, #fff, #f7f8ff);
+      }
+      .forecast-chart .chart-hover {
+        opacity: 0;
+        transition: opacity 0.15s;
+      }
+      .forecast-chart .plot-hit:hover .chart-hover {
+        opacity: 1;
+      }
+      .forecast-metrics {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin: 14px 0;
+      }
+      .forecast-metric {
+        background: #f8f9fd;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 13px;
+        min-width: 0;
+      }
+      .forecast-metric .metric-label {
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .forecast-metric strong {
+        display: block;
+        font-size: clamp(16px, 2vw, 22px);
+        margin-top: 5px;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+      }
+      .metric-before {
+        color: #d64a4a;
+        text-decoration: line-through;
+        text-decoration-thickness: 2px;
+        font-weight: 650;
+      }
+      .metric-arrow {
+        color: #8b91a3;
+        padding: 0 2px;
+      }
+      .metric-after {
+        color: #3c9a78;
+        font-weight: 850;
+      }
+      .metric-result {
+        font-size: 12px;
+        color: #3c9a78;
+        font-weight: 800;
+        margin-top: 4px;
+      }
+      .info-tip {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #c8cddd;
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        font-size: 10px;
+        font-weight: 800;
+        color: #69738a;
+        cursor: help;
+        flex-shrink: 0;
+      }
+      .info-tip span {
+        display: none;
+        position: absolute;
+        z-index: 20;
+        bottom: calc(100% + 8px);
+        left: 50%;
+        transform: translateX(-50%);
+        width: 230px;
+        padding: 9px 11px;
+        background: #20243a;
+        color: #fff;
+        border-radius: 9px;
+        font-size: 11px;
+        font-weight: 500;
+        line-height: 1.45;
+        letter-spacing: 0;
+        box-shadow: 0 8px 20px #1112;
+      }
+      .info-tip:hover span,
+      .info-tip:focus span {
+        display: block;
+      }
+      .forecast-compare {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin: 12px 0;
+      }
+      .forecast-side {
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+      }
+      .forecast-side b {
+        display: block;
+        font-size: 18px;
+      }
+      .forecast-progress {
+        height: 12px;
+        background: #e9edf5;
+        border-radius: 99px;
+        overflow: hidden;
+        margin: 8px 0;
+      }
+      .forecast-progress span {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, #7357e8, #42b993);
+        border-radius: 99px;
+      }
+      .forecast-chart {
+        width: 100%;
+        height: auto;
+        display: block;
+        overflow: visible;
+        max-height: 390px;
+      }
+      .forecast-chart .plot-hit {
+        cursor: crosshair;
+      }
+      .forecast-chart .plot-hit:hover {
+        stroke: #20243a;
+        stroke-width: 2;
+      }
+      .forecast-plot {
+        position: relative;
+        background: linear-gradient(180deg, #fff 0%, #f5f7ff 100%);
+        border: 1px solid #e4e7f1;
+        border-radius: 16px;
+        padding: 8px 10px;
+        margin: 10px 0;
+        box-shadow: inset 0 1px 0 #fff;
+      }
+      .projection-tooltip {
+        display: none;
+        position: absolute;
+        z-index: 5;
+        min-width: 190px;
+        max-width: 230px;
+        padding: 10px 12px;
+        background: #20243a;
+        color: #fff;
+        border: 1px solid #ffffff24;
+        border-radius: 12px;
+        box-shadow: 0 12px 28px #1d204233;
+        font-size: 11px;
+        line-height: 1.55;
+        pointer-events: none;
+      }
+      .projection-tooltip b {
+        display: block;
+        color: #fff;
+        font-size: 12px;
+        margin-bottom: 4px;
+      }
+      .projection-tooltip span {
+        display: block;
+        color: #e3e5f1;
+      }
+      .forecast-legend {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .forecast-legend i {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+        margin-right: 5px;
+      }
+      .forecast-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+      .forecast-table th,
+      .forecast-table td {
+        padding: 8px;
+        text-align: right;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+      }
+      .forecast-table th:first-child,
+      .forecast-table td:first-child {
+        text-align: left;
+      }
+      .forecast-table-wrap {
+        overflow: auto;
+        max-height: 350px;
+      }
+      @media (max-width: 720px) {
+        .forecast-metrics {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .forecast-compare {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .forecast-input-main {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 22px;
+      }
+      .forecast-input-fields {
+        flex: 1;
+        min-width: 0;
+      }
+      .kitty-ring {
+        width: 172px;
+        height: auto;
+        flex: 0 0 172px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 0;
+      }
+      .kitty-ring svg {
+        width: 132px;
+        height: 132px;
+        flex: 0 0 132px;
+        overflow: visible;
+      }
+      .kitty-ring-track {
+        fill: none;
+        stroke: #dedcf0;
+        stroke-width: 9;
+      }
+      .kitty-ring-fill {
+        fill: none;
+        stroke: #7656e8;
+        stroke-width: 9;
+        stroke-linecap: round;
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+        transition: stroke-dasharray 0.35s ease;
+      }
+      .kitty-ring-percent {
+        font-size: 21px;
+        font-weight: 850;
+        fill: #33265f;
+      }
+      .kitty-ring-label {
+        font-size: 8px;
+        font-weight: 800;
+        letter-spacing: 1.4px;
+        fill: #80769d;
+      }
+      .forecast-chart {
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        display: block;
+      }
+      .forecast-plot {
+        border: 1px solid #eeebfa;
+        border-radius: 16px;
+        padding: 8px;
+        background: linear-gradient(180deg, #fcfbff, #f6f3ff);
+      }
+      .forecast-chart text {
+        font-family: inherit;
+      }
+      .forecast-chart .plot-hit {
+        cursor: crosshair;
+      }
+      .forecast-chart .plot-hit circle {
+        transition: r 0.12s;
+        stroke: none;
+      }
+      .forecast-chart .plot-hit:hover circle {
+        r: 3.5;
+      }
+      .forecast-legend {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 10px;
+      }
+      @media (max-width: 560px) {
+        .forecast-input-main {
+          gap: 8px;
+          align-items: flex-start;
+        }
+        .kitty-ring {
+          width: 118px;
+          flex: 0 0 118px;
+        }
+        .kitty-ring svg {
+          width: 100px;
+          height: 100px;
+          flex-basis: 100px;
+        }
+        .forecast-input input {
+          font-size: 18px;
+        }
+        .forecast-calc-row {
+          align-items: flex-start;
+        }
+      }
+
+      .kitty-closure-date {
+        margin-top: 6px;
+        width: 100%;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+      }
+      .kitty-closure-date span {
+        font-size: 9px;
+        letter-spacing: 0.06em;
+        font-weight: 750;
+        color: #777f95;
+      }
+      .kitty-closure-date strong {
+        font-size: 16px;
+        line-height: 1.25;
+        color: #35266f;
+        font-weight: 850;
+        white-space: nowrap;
+      }
+      .kitty-closure-date .date-before {
+        color: #d64a4a;
+        text-decoration: line-through;
+        text-decoration-thickness: 1.5px;
+        font-weight: 650;
+      }
+      .kitty-closure-date .date-arrow {
+        color: #8b91a3;
+        padding: 0 3px;
+      }
+      .kitty-closure-date .date-after {
+        color: #35266f;
+        font-weight: 850;
+      }
+      .kitty-closure-date .date-saved {
+        color: #3c9a78;
+        font-size: 11px;
+        font-weight: 850;
+        letter-spacing: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="load-gate" id="loadGate">
+      <div class="load-panel">
+        <div class="logo" style="margin-bottom: 18px">0</div>
+        <h2 id="loadTitle">Connecting to Project Zero cloud storage</h2>
+        <p id="loadMessage">Please wait while the app loads your saved loans, checklists, wallet entries, and activity.</p>
+        <button class="primary" id="loadBackupButton" hidden>Choose backup for one-time migration</button>
+        <p class="load-note" id="loadNote">Your data is stored in your Supabase project.</p>
+      </div>
+    </div>
+    <main class="app">
+      <header class="top">
+        <div class="brand">
+          <div class="logo">0</div>
+          <div>
+            <h1>PROJECT ZERO</h1>
+            <p>PERSONAL DEBT TRACKER</p>
+          </div>
+        </div>
+        <div class="actions">
+          <button id="export">↓ Export backup</button><button class="primary" id="addKitty">＋ Loan Kitty</button>
+          <div class="cloud-status" id="cloudStatus" role="status" aria-live="polite">Connecting to cloud…</div>
+        </div>
+      </header>
+      <section class="stats sticky-stats">
+        <div class="stat"><label>DEBT REMAINING</label><strong id="debt">₹0</strong><small id="debtNote">7 active loans</small></div>
+        <div class="stat"><label>REGULAR LOAN EMIs</label><strong id="monthly">₹0</strong><small id="monthlyNote">Monthly EMIs across six active loans</small></div>
+      </section>
+      <section class="layout">
+        <div class="card">
+          <div class="head">
+            <div>
+              <h3>Loan portfolio</h3>
+              <p>Current outstanding principal and repayment progress.</p>
+            </div>
+            <button class="soft" id="editLoans">Manage loans</button>
+          </div>
+          <div class="loan-list" id="loanList"></div>
+        </div>
+        <aside class="card">
+          <div class="head">
+            <div>
+              <h3>🎯 Next victory target</h3>
+              <p>Snowball strategy: smallest balance first.</p>
+            </div>
+          </div>
+          <div id="target"></div>
+          <div style="height: 18px"></div>
+          <div class="head">
+            <div>
+              <h3>Monthly cash flow</h3>
+              <p>Monthly scheduled loan payments.</p>
+            </div>
+          </div>
+          <div id="cashflowBreakdown"></div>
+        </aside>
+      </section>
+      <nav class="tabs">
+        <button class="tab active" data-view="overview">Overview</button><button class="tab" data-view="payments">EMI checklist</button><button class="tab" data-view="analytics">Analytics</button><button class="tab" data-view="kittyview">Loan Kitty</button
+        ><button class="tab" data-view="log">Activity log</button><button class="tab" data-view="settings">Data & settings</button>
+      </nav>
+      <section class="view active" id="view-overview">
+        <div class="two">
+          <div class="card">
+            <div class="head">
+              <div>
+                <h3>📉 Debt journey</h3>
+                <p>Recorded monthly snapshots and current balance.</p>
+              </div>
+            </div>
+            <svg id="debtChart" class="chart" viewBox="0 0 600 230" role="img" aria-label="Debt balance trend"></svg>
+            <p class="tiny muted" id="chartNote">A starting snapshot is saved. The trend develops as you log payments and monthly snapshots.</p>
+          </div>
+          <div class="card">
+            <div class="head">
+              <div>
+                <h3>🧁 Debt mix</h3>
+                <p>Share of current principal by loan.</p>
+              </div>
+            </div>
+            <div id="debtDonut" class="donut-wrap"></div>
+          </div>
+        </div>
+        <div class="two" style="margin-top: 14px">
+          <div class="card">
+            <div class="head">
+              <div>
+                <h3>📅 Upcoming EMIs</h3>
+                <p>Grouped by how soon they are due.</p>
+              </div>
+            </div>
+            <div id="upcoming"></div>
+          </div>
+          <div class="card">
+            <div class="head">
+              <div>
+                <h3>✨ Your month at a glance</h3>
+                <p>Progress based on logged records only.</p>
+              </div>
+            </div>
+            <div id="monthStats"></div>
+          </div>
+        </div>
+      </section>
+      <section class="view" id="view-payments">
+        <div class="card">
+          <div class="head">
+            <div>
+              <h3 id="monthTitle">Monthly payment checklist</h3>
+              <p>Tick a payment only after it has actually cleared or been deducted.</p>
+            </div>
+            <div><button id="prev">←</button> <button id="next">→</button></div>
+          </div>
+          <div class="notice">A tick records the scheduled amount as paid on its due date. You can edit the actual date and amount in Activity log. Historical October payments already confirmed are pre-logged.</div>
+          <div id="checklist" class="checklist"></div>
+          <div class="head" style="margin-top: 15px; margin-bottom: 0"><b id="checkSummary">0 / 0 paid</b><span class="tiny muted" id="bonus">Monthly bonus pending</span></div>
+        </div>
+      </section>
+      <section class="view" id="view-analytics">
+        <div class="two">
+          <div class="card">
+            <div class="head">
+              <div>
+                <h3>📊 Outstanding by loan</h3>
+                <p>Current principal allocation.</p>
+              </div>
+            </div>
+            <div id="analyticsDonut" class="donut-wrap"></div>
+          </div>
+          <div class="card">
+            <div class="head">
+              <div>
+                <h3>💸 Monthly EMI distribution</h3>
+                <p>Share of recurring commitments.</p>
+              </div>
+            </div>
+            <div id="emiDonut" class="donut-wrap"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 14px">
+          <div class="head">
+            <div>
+              <h3>Loan comparison</h3>
+              <p>Rate, EMI and balance at a glance.</p>
+            </div>
+          </div>
+          <div class="tablewrap" id="comparison"></div>
+        </div>
+      </section>
+      <section class="view" id="view-kittyview">
+        <div class="two">
+          <div class="card">
+            <div class="eyebrow">Your optional savings pot</div>
+            <h2 style="font-size: 32px; margin: 5px 0" id="kittyBig">₹0</h2>
+            <p class="muted">No monthly target. Contribute when you can. Kitty stays separate until a real foreclosure is completed.</p>
+            <button class="primary" id="kittyAdd2">＋ Record contribution</button>
+          </div>
+          <div class="card">
+            <h3 style="margin-top: 0">Smallest loan milestone</h3>
+            <div id="kittyMilestone"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 14px">
+          <div class="head">
+            <div>
+              <h3>Kitty ledger</h3>
+              <p>Deposits and withdrawals.</p>
+            </div>
+          </div>
+          <div id="kittyLedger" class="tablewrap"></div>
+        </div>
+      </section>
+      <section class="view" id="view-log">
+        <div class="card">
+          <div class="head">
+            <div>
+              <h3>📚 Activity log</h3>
+              <p>All recorded payments, contributions and closure events.</p>
+            </div>
+            <button class="soft" id="manualPayment">＋ Add record</button>
+          </div>
+          <div id="history" class="tablewrap"></div>
+        </div>
+      </section>
+      <section class="view" id="view-settings">
+        <div class="card" style="margin-top: 14px">
+          <div class="head">
+            <div>
+              <h3>Manage loans</h3>
+              <p>Update balances, repayment terms and dates.</p>
+            </div>
+          </div>
+          <div id="loanSettings" class="tablewrap"></div>
+        </div>
+      </section>
+      <footer class="footer">PROJECT ZERO · PERSONAL DEBT TRACKER · EXPORT YOUR JSON BACKUP REGULARLY</footer>
+    </main>
+    <section class="view" id="view-loandetail"><div id="loanDetail"></div></section>
+    <div class="modalback" id="modalback">
+      <div class="modal">
+        <div class="modalhead">
+          <h3 id="modalTitle">Add record</h3>
+          <button id="closeModal">✕</button>
+        </div>
+        <div id="modalBody"></div>
+      </div>
+    </div>
+    <div class="toast" id="toast"></div>
+    <input id="restoreFile" type="file" accept=".json,application/json" class="hide" />
+    <script>
+      const fmt = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }),
+        money = (n) => fmt.format(Number(n) || 0),
+        n2 = (n) => Math.round((Number(n) || 0) * 100) / 100;
+      const today = () => {
+          let d = new Date();
+          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+        },
+        monthOf = (d) => String(d || "").slice(0, 7),
+        esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+      const SUPABASE_URL = "https://femxqncjoppccywvecux.supabase.co/rest/v1/",
+        SUPABASE_ANON_KEY = "sb_publishable_o_S8uDzPLn6JiKB8DxNRww_e11-0Msl";
+      const configured = () => SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("YOUR_") && SUPABASE_ANON_KEY.length > 10 && !SUPABASE_ANON_KEY.includes("YOUR_");
+      function active() {
+        return db.loans.filter((l) => l.status === "active");
+      }
+      function kittyBalance() {
+        return n2(db.kitty.reduce((a, x) => a + x.amount, 0) - db.foreclosures.reduce((a, x) => a + x.kittyUsed, 0));
+      }
+      function effective(l) {
+        return Math.max(0, n2(l.balance - db.payments.filter((p) => p.loanId === l.id && p.paid && !p.seeded && p.principal != null).reduce((a, p) => a + p.principal, 0)));
+      }
+      function debt() {
+        return n2(active().reduce((a, l) => a + effective(l), 0));
+      }
+      function monthly() {
+        return n2(active().reduce((a, l) => a + l.emi, 0));
+      }
+      function fmtDate(d) {
+        return d ? new Date(d + "T12:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—";
+      }
+      function monthName(m) {
+        return new Date(m + "-01T12:00:00").toLocaleDateString("en-IN", { month: "long", year: "numeric" });
+      }
+      function dateFor(m, day) {
+        let [y, mo] = m.split("-").map(Number),
+          last = new Date(y, mo, 0).getDate();
+        return `${y}-${String(mo).padStart(2, "0")}-${String(Math.min(day, last)).padStart(2, "0")}`;
+      }
+      function toast(t) {
+        let x = document.getElementById("toast");
+        x.textContent = t;
+        x.style.display = "block";
+        setTimeout(() => (x.style.display = "none"), 2200);
+      }
+      function setCloudStatus(message, isError = false) {
+        let status = document.getElementById("cloudStatus");
+        status.textContent = message;
+        status.classList.toggle("error", isError);
+      }
+      function setGate(title, message, allowMigration = false, note = "") {
+        document.getElementById("loadTitle").textContent = title;
+        document.getElementById("loadMessage").textContent = message;
+        document.getElementById("loadBackupButton").hidden = !allowMigration;
+        document.getElementById("loadNote").textContent = note;
+      }
+      async function supabaseRequest(path, options = {}) {
+        const apiBase = SUPABASE_URL.replace(/\/+$/, "").replace(/\/rest\/v1$/, "");
+        const response = await fetch(`${apiBase}/rest/v1/${path}`, {
+          ...options,
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            ...(SUPABASE_ANON_KEY.split(".").length === 3 ? { Authorization: `Bearer ${SUPABASE_ANON_KEY}` } : {}),
+            ...(options.body ? { "Content-Type": "application/json" } : {}),
+            ...options.headers,
+          },
+        });
+        if (!response.ok) {
+          const detail = await response.text();
+          throw new Error(`Supabase request failed (${response.status}): ${detail || response.statusText}`);
+        }
+        return response.status === 204 ? null : response.json();
+      }
+      async function loadCloudState() {
+        const rows = await supabaseRequest("project_zero_state?id=eq.main&select=state,updated_at");
+        if (!Array.isArray(rows)) throw new Error("Supabase returned an unexpected response.");
+        if (!rows.length) return null;
+        if (!rows[0].updated_at) throw new Error("The cloud record has no updated_at timestamp. Check the Supabase table setup.");
+        cloudUpdatedAt = rows[0].updated_at;
+        return rows[0].state;
+      }
+      async function writeCloudState(state) {
+        const updatedAt = new Date(Math.max(Date.now(), cloudUpdatedAt ? Date.parse(cloudUpdatedAt) + 1 : 0)).toISOString(),
+          body = JSON.stringify({ state, updated_at: updatedAt });
+        if (!cloudUpdatedAt) {
+          const created = await supabaseRequest("project_zero_state", {
+            method: "POST",
+            headers: { Prefer: "return=representation" },
+            body: JSON.stringify({ id: "main", state, updated_at: updatedAt }),
+          });
+          if (!Array.isArray(created) || !created[0]?.updated_at) throw new Error("Supabase did not confirm the first cloud save.");
+          cloudUpdatedAt = created[0].updated_at;
+          return;
+        }
+        const saved = await supabaseRequest(`project_zero_state?id=eq.main&updated_at=eq.${encodeURIComponent(cloudUpdatedAt)}`, {
+          method: "PATCH",
+          headers: { Prefer: "return=representation" },
+          body,
+        });
+        if (!Array.isArray(saved) || !saved[0]?.updated_at) throw new Error("The cloud data changed since this device loaded it. Export your unsaved changes and reload before continuing.");
+        cloudUpdatedAt = saved[0].updated_at;
+      }
+      function validateState(state) {
+        if (!state || !Array.isArray(state.loans) || !Array.isArray(state.payments) || !Array.isArray(state.kitty)) {
+          throw new Error("This is not a valid Project Zero backup or cloud record.");
+        }
+        state.version = state.version || 2;
+        state.foreclosures = Array.isArray(state.foreclosures) ? state.foreclosures : [];
+        state.bonuses = Array.isArray(state.bonuses) ? state.bonuses : [];
+        state.snapshots = Array.isArray(state.snapshots) ? state.snapshots : [];
+        return state;
+      }
+      function currentMonth() {
+        return today().slice(0, 7);
+      }
+      let saveQueue = Promise.resolve(true),
+        cloudUpdatedAt = null;
+      function save() {
+        render();
+        if (!db) return Promise.resolve(false);
+        const snapshot = structuredClone(db);
+        setCloudStatus("Saving changes…");
+        saveQueue = saveQueue
+          .catch(() => false)
+          .then(async () => {
+            try {
+              await writeCloudState(snapshot);
+              setCloudStatus("Saved to cloud");
+              return true;
+            } catch (error) {
+              console.error("Could not save Project Zero to Supabase.", error);
+              setCloudStatus(`Could not save: ${error.message}`, true);
+              toast("Cloud save failed. Check the message at the top of the app.");
+              return false;
+            }
+          });
+        return saveQueue;
+      }
+      function target() {
+        return active()
+          .slice()
+          .sort((a, b) => effective(a) - effective(b))[0];
+      }
+      function scheduleMonth(m) {
+        let added = false;
+        for (const l of active()) {
+          let due = dateFor(m, l.dueDay || 1);
+          let exists = db.payments.some((p) => p.loanId === l.id && p.dueDate === due);
+          if (!exists) {
+            db.payments.push({ id: `sched-${l.id}-${m}`, loanId: l.id, dueDate: due, date: null, amount: l.emi, type: "EMI", paid: false, onTime: false, principal: null, interest: null });
+            added = true;
+          }
+        }
+        return added;
+      }
+      function monthRows(m) {
+        scheduleMonth(m);
+        return db.payments.filter((p) => p.dueDate && p.dueDate.slice(0, 7) === m && p.type !== "Foreclosure");
+      }
+      function principalEstimate(l, amount) {
+        let interest = l.rate === 0 ? 0 : n2((effective(l) * l.rate) / 1200);
+        return { interest, principal: Math.max(0, n2(amount - interest)) };
+      }
+      function donut(elId, items, totalLabel) {
+        let el = document.getElementById(elId),
+          total = items.reduce((a, x) => a + x.value, 0);
+        if (!items.length || total <= 0) {
+          el.innerHTML = '<div class="empty">Nothing to chart yet.</div>';
+          return;
+        }
+        let colors = ["#7357e8", "#42b993", "#f2ad4d", "#e56f92", "#4c9bd6", "#9b79d6", "#8ab94e"];
+        let circ = 2 * Math.PI * 68,
+          offset = 0,
+          svg = "";
+        items.forEach((x, i) => {
+          let len = (x.value / total) * circ;
+          svg += `<circle cx="85" cy="85" r="68" fill="none" stroke="${colors[i % colors.length]}" stroke-width="22" stroke-dasharray="${len} ${circ - len}" stroke-dashoffset="${-offset}"/>`;
+          offset += len;
+        });
+        el.innerHTML = `<div class="donut"><svg viewBox="0 0 170 170">${svg}</svg><div class="donut-center"><strong>${money(total)}</strong><span class="tiny muted">${totalLabel}</span></div></div><div class="legend">${items.map((x, i) => `<div class="legend-row"><i class="dot" style="background:${colors[i % colors.length]}"></i><span>${esc(x.name)} <b>${((x.value / total) * 100).toFixed(1)}%</b></span></div>`).join("")}</div>`;
+      }
+      function renderLoans() {
+        document.getElementById("loanList").innerHTML = db.loans
+          .filter((l) => l.status === "active")
+          .map((l) => {
+            let bal = effective(l),
+              total = l.totalEmis || 0,
+              paid = Math.min(l.paidEmis || 0, total),
+              pct = total ? Math.max(0, Math.min(100, (paid / total) * 100)) : 0;
+            return `<article class="loan" onclick="openLoanDetail('${l.id}')"><div class="loan-top"><div><h4>${esc(l.name)}</h4><div class="loan-meta">EMI ${money(l.emi)} · ${l.rate}% p.a. · Due ${l.dueDay}${l.end ? " · Ends " + fmtDate(l.end) : ""}</div></div><div style="text-align:right"><div class="loan-balance">${money(bal)}</div><button class="loan-open" onclick="event.stopPropagation();openLoanDetail('${l.id}')">View details ↗</button></div></div><div class="bar"><span style="width:${pct}%"></span></div><div class="loan-foot"><span><b>${paid}/${total}</b> EMIs completed · ${pct.toFixed(1)}%</span><span>End date ${fmtDate(l.end)}</span></div></article>`;
+          })
+          .join("");
+      }
+      function renderTarget() {
+        let l = target(),
+          el = document.getElementById("target");
+        if (!l) {
+          el.innerHTML = '<div class="empty">All loans cleared. Quest complete! 🏆</div>';
+          return;
+        }
+        let bal = effective(l),
+          gap = Math.max(0, bal - kittyBalance()),
+          pct = Math.min(100, (kittyBalance() / Math.max(1, bal)) * 100);
+        el.innerHTML = `<div class="target"><div class="eyebrow">Your next smallest balance</div><h3>${esc(l.name)}</h3><div class="big">${money(bal)}</div><div class="tiny muted">Principal remaining</div><div style="display:flex;justify-content:space-between;margin-top:13px;font-size:11px"><span>Kitty coverage</span><b>${pct.toFixed(1)}%</b></div><div class="bar"><span style="width:${pct}%"></span></div><div class="tiny muted">${money(gap)} gap before lender fees and accrued interest.</div></div><p class="tiny muted">Use this as a savings target only. Get an official foreclosure quote before closing any loan.</p>`;
+      }
+      function renderChart() {
+        let svg = document.getElementById("debtChart"),
+          pts = [...db.snapshots].sort((a, b) => a.date.localeCompare(b.date));
+        let now = { date: today(), debt: debt() };
+        if (!pts.length) pts = [now];
+        else if (pts.at(-1).date !== now.date) pts.push(now);
+        else pts[pts.length - 1] = now;
+        const W = Math.max(240, Math.round(svg.getBoundingClientRect().width)),
+          H = W < 420 ? 250 : 290,
+          L = Math.min(82, Math.max(58, W * 0.12)),
+          R = 24,
+          T = 56,
+          B = 43,
+          values = pts.map((p) => Number(p.debt) || 0);
+        const low = Math.min(...values),
+          high = Math.max(...values),
+          spread = high - low,
+          pad = spread ? spread * 0.2 : Math.max(high * 0.08, 1000);
+        const min = Math.max(0, low - pad),
+          max = high + pad,
+          plotH = H - T - B,
+          plotW = W - L - R;
+        const coords = pts.map((p, i) => ({ x: L + (pts.length === 1 ? plotW / 2 : (i / (pts.length - 1)) * plotW), y: T + ((max - p.debt) / (max - min || 1)) * plotH, p }));
+        const axis = (v) => (v >= 100000 ? `₹${(v / 100000).toFixed(1)}L` : v >= 1000 ? `₹${(v / 1000).toFixed(0)}k` : money(v));
+        let grid = "";
+        for (let i = 0; i < 5; i++) {
+          const y = T + (i * plotH) / 4,
+            v = max - (i * (max - min)) / 4;
+          grid += `<line x1="${L}" y1="${y}" x2="${W - R}" y2="${y}" class="debt-grid"/><text x="${L - 12}" y="${y + 4}" class="debt-axis" text-anchor="end">${axis(v)}</text>`;
+        }
+        const path =
+          coords.length === 1
+            ? `M ${coords[0].x} ${coords[0].y}`
+            : coords.reduce((d, c, i) => {
+                if (i === 0) return `M ${c.x} ${c.y}`;
+                const prev = coords[i - 1],
+                  mid = (prev.x + c.x) / 2;
+                return `${d} C ${mid} ${prev.y}, ${mid} ${c.y}, ${c.x} ${c.y}`;
+              }, "");
+        const first = coords[0],
+          last = coords.at(-1),
+          area = `${path} L ${last.x} ${T + plotH} L ${first.x} ${T + plotH} Z`;
+        const change = pts.length > 1 ? pts.at(-1).debt - pts[0].debt : 0,
+          trend = change < 0 ? "down" : change > 0 ? "up" : "steady";
+        const trendLabel = change < 0 ? `↓ ${money(Math.abs(change))}` : change > 0 ? `↑ ${money(change)}` : "— No change";
+        const dateLabel = (d) => new Date(`${d}T12:00:00`).toLocaleDateString("en-IN", { month: "short", year: "2-digit" });
+        const labels = [...new Set([0, Math.floor((pts.length - 1) / 2), pts.length - 1])]
+          .map((i) => {
+            const c = coords[i],
+              anchor = i === 0 ? "start" : i === pts.length - 1 ? "end" : "middle";
+            return `<text x="${c.x}" y="${H - 12}" class="debt-date" text-anchor="${anchor}">${dateLabel(c.p.date)}</text>`;
+          })
+          .join("");
+        const points = coords.map((c, i) => `<circle cx="${c.x}" cy="${c.y}" r="${i === coords.length - 1 ? 6 : 4}" class="${i === coords.length - 1 ? "debt-point-current" : "debt-point"}"><title>${c.p.date}: ${money(c.p.debt)}</title></circle>`).join("");
+        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+        svg.innerHTML = `<defs><linearGradient id="debtAreaFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#6854d9" stop-opacity=".2"/><stop offset="100%" stop-color="#6854d9" stop-opacity=".015"/></linearGradient></defs>
+ <text x="${L}" y="19" class="debt-caption">OUTSTANDING DEBT</text>
+ <rect x="${W - 151}" y="2" width="127" height="30" rx="15" class="debt-trend debt-trend-${trend}"/>
+ <text x="${W - 87}" y="22" class="debt-trend-label" text-anchor="middle">${trendLabel}</text>
+ ${grid}<path d="${area}" fill="url(#debtAreaFill)"/><path d="${path}" class="debt-line"/>${points}<text x="${last.x - 2}" y="${Math.max(T + 13, last.y - 12)}" class="debt-point-label" text-anchor="end">${axis(last.p.debt)}</text>${labels}`;
+        const note = document.getElementById("chartNote");
+        note.textContent = `${pts.length > 1 ? `${pts.length} points · ${dateLabel(pts[0].date)} to ${dateLabel(pts.at(-1).date)}. ` : ""}Focused vertical scale makes balance changes easier to see.`;
+      }
+      function renderUpcoming() {
+        let now = new Date(today() + "T12:00:00"),
+          ym = today().slice(0, 7);
+        let rows = db.payments.filter((p) => !p.paid && p.dueDate && p.dueDate.slice(0, 7) === ym).sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+        let buckets = [
+          { label: "Due today", test: (d) => d === 0 },
+          { label: "Due in 1 day", test: (d) => d === 1 },
+          { label: "Due in 3 days", test: (d) => d >= 2 && d <= 3 },
+          { label: "Due in 7 days", test: (d) => d >= 4 && d <= 7 },
+          { label: "Due later this month", test: (d) => d > 7 },
+        ];
+        let html = buckets
+          .map((b) => {
+            let items = rows.filter((p) => {
+              let d = Math.round((new Date(p.dueDate + "T12:00:00") - now) / 86400000);
+              return b.test(d);
+            });
+            if (!items.length) return "";
+            return `<div class="upcoming-group"><h4>${b.label}<span>${items.length}</span></h4>${items
+              .map((p) => {
+                let l = db.loans.find((x) => x.id === p.loanId);
+                let days = Math.round((new Date(p.dueDate + "T12:00:00") - now) / 86400000);
+                return `<div class="upcoming-row"><div><b>${esc(l?.name || "Loan")}</b><div class="tiny muted">${fmtDate(p.dueDate)}${days === 0 ? " · Today" : days === 1 ? " · Tomorrow" : ` · In ${days} days`}</div></div><b>${money(p.amount)}</b></div>`;
+              })
+              .join("")}</div>`;
+          })
+          .join("");
+        document.getElementById("upcoming").innerHTML = html || '<div class="empty">No unpaid EMIs remaining this month.</div>';
+      }
+      function renderMonthStats() {
+        let m = db.monthCursor,
+          rows = monthRows(m),
+          paid = rows.filter((p) => p.paid),
+          due = rows.reduce((a, p) => a + p.amount, 0),
+          paidAmount = paid.reduce((a, p) => a + p.amount, 0);
+        document.getElementById("monthStats").innerHTML =
+          `<div class="three"><div><b>${paid.length}/${rows.length}</b><div class="tiny muted">Payments logged</div></div><div><b>${money(due)}</b><div class="tiny muted">Scheduled total</div></div><div><b>${money(paidAmount)}</b><div class="tiny muted">Paid so far</div></div></div><div class="bar" style="margin-top:14px"><span style="width:${rows.length ? (paid.length / rows.length) * 100 : 0}%"></span></div><p class="tiny muted">Current checklist month: ${monthName(m)}.</p>`;
+      }
+      function renderChecklist() {
+        let m = db.monthCursor,
+          rows = monthRows(m).sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+        document.getElementById("monthTitle").textContent = monthName(m) + " payment checklist";
+        document.getElementById("checklist").innerHTML = rows
+          .map((p) => {
+            let l = db.loans.find((x) => x.id === p.loanId);
+            return `<label class="check"><input type="checkbox" ${p.paid ? "checked" : ""} onchange="togglePaid('${p.id}',this.checked)"><div class="check-main"><b>${esc(l.name)}</b><span>Due ${fmtDate(p.dueDate)} · ${p.type}${p.paid ? " · Paid" : ""}</span></div><div class="check-amount">${money(p.amount)}<small>${p.paid ? "Paid" : "Mark paid when cleared"}</small></div></label>`;
+          })
+          .join("");
+        let paid = rows.filter((p) => p.paid).length;
+        document.getElementById("checkSummary").textContent = `${paid} / ${rows.length} paid`;
+        document.getElementById("bonus").textContent = `${money(rows.filter((p) => p.paid).reduce((a, p) => a + p.amount, 0))} paid of ${money(rows.reduce((a, p) => a + p.amount, 0))} scheduled`;
+      }
+      function renderAnalytics() {
+        donut(
+          "debtDonut",
+          active().map((l) => ({ name: l.name, value: effective(l) })),
+          "debt",
+        );
+        donut(
+          "analyticsDonut",
+          active().map((l) => ({ name: l.name, value: effective(l) })),
+          "debt",
+        );
+        donut(
+          "emiDonut",
+          active().map((l) => ({ name: l.name, value: l.emi })),
+          "monthly",
+        );
+        document.getElementById("comparison").innerHTML = `<table><thead><tr><th>Loan</th><th>Outstanding</th><th>EMI</th><th>Rate</th><th>Due</th><th>EMIs</th><th>End date</th></tr></thead><tbody>${active()
+          .map((l) => `<tr><td><b>${esc(l.name)}</b></td><td>${money(effective(l))}</td><td>${money(l.emi)}</td><td>${l.rate}%</td><td>${l.dueDay || "—"}</td><td>${l.paidEmis || 0}/${l.totalEmis || 0}</td><td>${fmtDate(l.end)}</td></tr>`)
+          .join("")}</tbody></table>`;
+      }
+      function renderKitty() {
+        let bal = kittyBalance(),
+          l = target(),
+          gap = l ? Math.max(0, effective(l) - bal) : 0;
+        document.getElementById("kittyBig").textContent = money(bal);
+        document.getElementById("kittyMilestone").innerHTML = l
+          ? `<b>${esc(l.name)}</b><h2 style="font-size:26px">${money(gap)}</h2><p class="tiny muted">Remaining to cover principal, before charges.</p><div class="bar"><span style="width:${Math.min(100, (bal / Math.max(1, effective(l))) * 100)}%"></span></div>`
+          : "No active loans.";
+        document.getElementById("kittyLedger").innerHTML = db.kitty.length
+          ? `<table><thead><tr><th>Date</th><th>Contribution</th><th></th></tr></thead><tbody>${db.kitty
+              .slice()
+              .sort((a, b) => b.date.localeCompare(a.date))
+              .map((x) => `<tr><td>${fmtDate(x.date)}</td><td>${money(x.amount)}</td><td><button class="danger" onclick="undoKitty('${x.id}')">Undo</button></td></tr>`)
+              .join("")}</tbody></table>`
+          : '<div class="empty">No contributions yet. Add money only when it works for you.</div>';
+      }
+      function renderHistory() {
+        let rows = [...db.payments.filter((p) => p.paid).map((p) => ({ ...p, kind: p.type })), ...db.kitty.map((x) => ({ ...x, kind: "Loan Kitty" }))].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+        document.getElementById("history").innerHTML = rows.length
+          ? `<table><thead><tr><th>Date</th><th>Activity</th><th>Amount</th><th>Principal</th><th>Interest</th><th></th></tr></thead><tbody>${rows
+              .map((p) => {
+                let l = db.loans.find((x) => x.id === p.loanId);
+                return `<tr><td>${fmtDate(p.date)}</td><td>${esc(l?.name || p.name || p.kind)}</td><td><b>${money(p.amount)}</b></td><td>${p.principal == null ? "—" : money(p.principal)}</td><td>${p.interest == null ? "—" : money(p.interest)}</td><td>${p.kind === "Loan Kitty" ? `<button class="danger" onclick="undoKitty('${p.id}')">Undo</button>` : `<button onclick="editPayment('${p.id}')">Edit</button>`}</td></tr>`;
+              })
+              .join("")}</tbody></table><p class="tiny muted"></p>`
+          : '<div class="empty">Your activity will appear here.</div>';
+      }
+
+      function openLoanDetail(id) {
+        let l = db.loans.find((x) => x.id === id);
+        if (!l) return;
+        activeLoanDetailId = id;
+        document.body.classList.add("loan-detail-mode");
+        document.querySelectorAll(".view").forEach((x) => x.classList.toggle("active", x.id === "view-loandetail"));
+        document.querySelectorAll(".tab").forEach((x) => x.classList.remove("active"));
+        renderLoanDetail(l);
+      }
+      function backToOverview() {
+        activeLoanDetailId = null;
+        document.body.classList.remove("loan-detail-mode");
+        document.querySelectorAll(".view").forEach((x) => x.classList.toggle("active", x.id === "view-overview"));
+        document.querySelectorAll(".tab").forEach((x) => x.classList.toggle("active", x.dataset.view === "overview"));
+        render();
+      }
+
+      function foreclosureModel(l, saved) {
+        const bal = effective(l),
+          rate = Math.max(0, Number(l.rate) || 0) / 1200,
+          emi = Math.max(0, Number(l.emi) || 0);
+        const closeAmount = n2(bal * 1.07),
+          now = new Date();
+        now.setDate(1);
+        now.setHours(12, 0, 0, 0);
+        function simulate(startBal, extra = 0) {
+          let b = Math.max(0, startBal - extra),
+            rows = [],
+            month = new Date(now),
+            totalInterest = 0;
+          for (let i = 0; i < 720 && b > 0.01; i++) {
+            month.setMonth(month.getMonth() + 1);
+            let intr = n2(b * rate),
+              payment = Math.min(emi, b + intr),
+              principal = Math.max(0, n2(payment - intr));
+            if (emi <= intr && b > 0) {
+              rows.push({ date: new Date(month), open: b, interest: intr, emi: payment, principal: 0, close: b });
+              break;
+            }
+            let opening = b;
+            b = Math.max(0, n2(b - principal));
+            totalInterest = n2(totalInterest + intr);
+            rows.push({ date: new Date(month), open: opening, interest: intr, emi: payment, principal, close: b });
+          }
+          return { rows, totalInterest, months: rows.length, closeDate: rows.length ? rows[rows.length - 1].date : null };
+        }
+        const base = simulate(bal),
+          prep = simulate(bal, Math.min(bal, Math.max(0, saved))),
+          ready = saved >= closeAmount && bal > 0;
+        return { bal, closeAmount, shortfall: Math.max(0, n2(closeAmount - saved)), ready, base, prep, monthSaved: Math.max(0, base.months - prep.months), interestSaved: Math.max(0, n2(base.totalInterest - prep.totalInterest)), fee: n2(bal * 0.07), saved };
+      }
+      function forecastTooltip(text) {
+        return `<span class="info-tip" tabindex="0" aria-label="Metric information">i<span>${text}</span></span>`;
+      }
+      function renderForeclosure(l, explicitSaved) {
+        const savedInput = document.getElementById("savedAmount");
+        const saved = explicitSaved === undefined ? Number(savedInput?.value) || 0 : Math.max(0, Number(explicitSaved) || 0);
+        const model = foreclosureModel(l, saved);
+        const { bal, closeAmount, shortfall, ready, base, prep, monthSaved, interestSaved, fee } = model;
+        const datestr = (d) => (d ? d.toLocaleDateString("en-IN", { month: "short", year: "numeric" }) : "—");
+        const baseDate = datestr(base.closeDate),
+          newDate = ready ? datestr(new Date()) : datestr(prep.closeDate),
+          readiness = closeAmount > 0 ? Math.min(100, (saved / closeAmount) * 100) : 100;
+        let metrics = [
+          ["Foreclosure amount", money(closeAmount), "Current principal plus estimated 7% charge."],
+          ["More needed", `<span class="metric-before">${money(closeAmount)}</span><span class="metric-arrow"> → </span><span class="metric-after">${money(shortfall)}</span>`, "Estimated kitty target before saved amount → remaining gap after applying your current kitty."],
+          ["Time saved", `<span class="metric-before">${base.months} months</span> <span class="metric-arrow">→</span> <span class="metric-after">${prep.months} months</span>`, "Regular remaining duration reduced to the estimated duration after applying the saved amount."],
+          [
+            "Interest saved",
+            `<span class="metric-before">${money(base.totalInterest)}</span><span class="metric-arrow"> − </span><span class="metric-after">${money(prep.totalInterest)}</span><div class="metric-result">${money(interestSaved)} saved</div>`,
+            "Regular projected interest minus interest projected after applying the kitty. The result is estimated interest avoided.",
+          ],
+          ["Foreclosure charge", money(fee), "A conservative 7% estimate applied to current outstanding."],
+          ["Foreclosure readiness", `${readiness.toFixed(1)}%`, "Saved amount divided by estimated foreclosure amount."],
+        ];
+        const rows = Array.from({ length: Math.max(base.rows.length, prep.rows.length) }, (_, i) => ({ i, base: base.rows[i], prep: prep.rows[i] }));
+        const W = Math.max(220, Math.min(1100, document.getElementById("loanDetail").clientWidth - 56)),
+          H = W < 420 ? 270 : 320,
+          L = Math.min(72, Math.max(52, W * 0.12)),
+          R = 20,
+          T = 48,
+          B = 44,
+          N = Math.max(rows.length, 1),
+          max = Math.max(bal, 1),
+          x = (i) => L + (N <= 1 ? 0 : i / (N - 1)) * (W - L - R),
+          y = (v) => T + (1 - v / max) * (H - T - B);
+        const axisMoney = (n) => (n >= 100000 ? `₹${(n / 100000).toFixed(1)}L` : n >= 1000 ? `₹${(n / 1000).toFixed(0)}k` : money(n));
+        const grid = [0, 0.25, 0.5, 0.75, 1]
+          .map((p) => `<line x1="${L}" y1="${y(max * p)}" x2="${W - R}" y2="${y(max * p)}" stroke="#e9ecf3" stroke-dasharray="3 5"/><text x="${L - 9}" y="${y(max * p) + 4}" text-anchor="end" font-size="${W < 420 ? 10 : 12}" fill="#798398">${axisMoney(max * p)}</text>`)
+          .join("");
+        const smoothPath = (key) => {
+          const pts = rows.filter((r) => r[key]).map((r) => [x(r.i), y(r[key].close)]);
+          if (!pts.length) return "";
+          if (pts.length === 1) return `M ${pts[0][0]} ${pts[0][1]}`;
+          const first = pts[0],
+            last = pts.at(-1),
+            dx = last[0] - first[0],
+            ease = dx * 0.38;
+          return `M ${first[0]} ${first[1]} C ${first[0] + ease} ${first[1]}, ${last[0] - ease} ${last[1]}, ${last[0]} ${last[1]}`;
+        };
+        const pathBase = smoothPath("base"),
+          pathPrep = smoothPath("prep");
+        const baseEnd = rows.filter((r) => r.base).at(-1),
+          prepEnd = rows.filter((r) => r.prep).at(-1);
+        const area = (key) => {
+          const points = rows.filter((r) => r[key]);
+          return points.length ? `${smoothPath(key)} L ${x(points.at(-1).i)} ${H - B} L ${x(points[0].i)} ${H - B} Z` : "";
+        };
+        const endpoint = (point, series, fill, stroke, offset) => {
+          if (!point) return "";
+          const px = x(point.i),
+            py = y(point[series].close),
+            label = point[series].date.toLocaleDateString("en-IN", { month: "short", year: "2-digit" }),
+            labelWidth = W < 420 ? 76 : 86,
+            labelHeight = 22;
+          const lx = Math.max(L, Math.min(W - R - labelWidth, px - labelWidth / 2)),
+            ly = Math.max(T + 8, py - offset);
+          const leaderX = Math.max(lx + 8, Math.min(lx + labelWidth - 8, px));
+          return `<g class="projection-endpoint"><line x1="${px}" y1="${py - 4}" x2="${leaderX}" y2="${ly + labelHeight}" stroke="${stroke}" stroke-opacity=".55"/><circle cx="${px}" cy="${py}" r="5" fill="${stroke}" stroke="#fff" stroke-width="2"/><rect x="${lx}" y="${ly}" width="${labelWidth}" height="${labelHeight}" rx="11" fill="${fill}" stroke="${stroke}" stroke-opacity=".22"/><text x="${lx + labelWidth / 2}" y="${ly + 15}" text-anchor="middle" fill="${stroke}">${label}</text><title>${series === "base" ? "Regular plan" : "With kitty"} ends ${label}</title></g>`;
+        };
+        const endpointLabels = `${endpoint(baseEnd, "base", "#eef1f5", "#64748b", 34)}${saved > 0 ? endpoint(prepEnd, "prep", "#f0edff", "#6854d9", 64) : ""}`;
+        const badge = saved > 0 ? `${monthSaved} mo sooner` : "Add savings",
+          badgeWidth = W < 420 ? 92 : 115,
+          badgeX = W - R - badgeWidth;
+        const chart = `<svg id="projectionSvg" class="forecast-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Projected loan balance. The ending month is labeled at each plan endpoint. Hover over the chart for monthly details."><desc>Projected remaining principal by month. Regular repayment is slate; the Kitty scenario is violet.</desc><defs><linearGradient id="projectionAreaFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#6854d9" stop-opacity=".18"/><stop offset="100%" stop-color="#6854d9" stop-opacity=".015"/></linearGradient></defs><text x="${L}" y="19" class="projection-caption">${W < 420 ? "BALANCE" : "PROJECTED BALANCE"}</text><rect x="${badgeX}" y="3" width="${badgeWidth}" height="28" rx="14" class="projection-badge"/><text x="${badgeX + badgeWidth / 2}" y="22" text-anchor="middle" class="projection-badge-text">${badge}</text>${grid}<path d="${area("base")}" fill="url(#projectionAreaFill)"/><path d="${pathBase}" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="${saved > 0 ? pathPrep : ""}" fill="none" stroke="#6854d9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${endpointLabels}<line id="projectionCrosshair" x1="${L}" y1="${T}" x2="${L}" y2="${H - B}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 4" opacity="0"/>${grid ? `<rect id="projectionHitArea" x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="transparent" style="cursor:crosshair"/>` : ""}</svg>`;
+        const schedule = rows.map((r) => `<tr><td>${r.base ? datestr(r.base.date) : "—"}</td><td>${r.base ? money(r.base.emi ?? l.emi) : "—"}</td><td>${r.base ? money(r.base.close) : "—"}</td><td>${r.prep ? money(r.prep.close) : "₹0"}</td></tr>`).join("");
+        const target = ready ? "Saved amount can cover the estimated foreclosure amount now." : `You are ${readiness.toFixed(1)}% of the way. ${money(shortfall)} more to reach the estimated foreclosure target.`;
+        document.getElementById("foreclosurePanel").innerHTML =
+          `<div class="card forecast-wrap"><div class="head"><div><h3>Foreclosure motivation calculator</h3><p>Model the effect of your available savings as a one-time payment.</p></div></div><div class="forecast-input field"><div class="forecast-input-main"><div class="forecast-input-fields"><label for="savedAmount">SAVED AMOUNT · YOUR KITTY</label><input id="savedAmount" type="number" min="0" step="100" value="${saved}" aria-label="Saved amount"><div class="forecast-calc-row"><button type="button" class="primary" id="calculateForeclosure">Calculate</button></div></div><div class="kitty-ring" role="img" aria-label="${readiness.toFixed(1)} percent of foreclosure target saved"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" class="kitty-ring-track"/><circle cx="50" cy="50" r="42" class="kitty-ring-fill" style="stroke-dasharray:${(264 * readiness) / 100} 264"/><text x="50" y="47" text-anchor="middle" class="kitty-ring-percent">${Math.round(readiness)}%</text><text x="50" y="62" text-anchor="middle" class="kitty-ring-label">READY</text></svg><div class="kitty-closure-date"><span>FORECLOSURE MONTH</span><strong><span class="date-before">${baseDate}</span><span class="date-arrow">→</span><span class="date-after">${newDate}</span><span class="date-saved"> | ${Math.max(0, monthSaved)} months saved</span></strong></div></div></div></div><div style="margin-top:12px"><b>${target}</b><div class="forecast-progress"><span style="width:${readiness}%"></span></div><div class="tiny muted">${money(saved)} / ${money(closeAmount)} toward estimated closure</div></div><div class="forecast-metrics">${metrics.map((m) => `<div class="forecast-metric"><div class="metric-label">${m[0]} ${forecastTooltip(m[2])}</div><strong>${m[1]}</strong></div>`).join("")}</div><div class="head"><div><h3>Balance projection</h3><p>Track your balance over time. Hover for the month, both balances, and monthly EMI.</p></div></div><div class="forecast-plot">${chart}<div class="projection-tooltip" id="projectionTooltip"></div></div><div class="forecast-legend"><span><i style="background:#64748b"></i>Regular plan</span><span><i style="background:#6d5ce8"></i>With kitty</span></div><div class="head" style="margin-top:16px"><div><h3>Monthly projection details</h3><p>Monthly payment and remaining balance in each plan.</p></div></div><div class="forecast-table-wrap"><table class="forecast-table"><thead><tr><th>Month</th><th>Monthly EMI</th><th>Regular balance</th><th>Balance with kitty</th></tr></thead><tbody>${schedule}</tbody></table></div><p class="tiny muted">Estimate assumes constant rate and EMI; saved amount is a one-time principal prepayment. The foreclosure target includes a 7% estimated charge; actual lender quotes may differ.</p></div>`;
+        if (saved <= 0) {
+          const legend = document.querySelector(".forecast-legend");
+          legend.querySelector("span:nth-child(2)").hidden = true;
+          legend.insertAdjacentHTML("beforeend", '<span class="forecast-hint">Add savings to compare the kitty plan</span>');
+        }
+        document.getElementById("calculateForeclosure").onclick = () => renderForeclosure(l, Number(document.getElementById("savedAmount").value) || 0);
+        const svg = document.getElementById("projectionSvg"),
+          hit = document.getElementById("projectionHitArea"),
+          cross = document.getElementById("projectionCrosshair"),
+          tooltip = document.getElementById("projectionTooltip"),
+          plot = document.querySelector(".forecast-plot");
+        hit.addEventListener("mousemove", (ev) => {
+          const rect = svg.getBoundingClientRect(),
+            svgX = ((ev.clientX - rect.left) / rect.width) * W,
+            plotW = W - L - R,
+            idx = Math.max(0, Math.min(N - 1, Math.round(((svgX - L) / plotW) * (N - 1)))),
+            row = rows[idx];
+          if (!row?.base) return;
+          const cx = x(idx);
+          cross.setAttribute("x1", cx);
+          cross.setAttribute("x2", cx);
+          cross.setAttribute("opacity", "1");
+          const px = ev.clientX - plot.getBoundingClientRect().left,
+            py = ev.clientY - plot.getBoundingClientRect().top;
+          tooltip.innerHTML = `<b>${datestr(row.base.date)}</b><span>Regular plan balance: ${money(row.base.close)}</span><span>With kitty balance: ${money(row.prep?.close ?? 0)}</span><span>Monthly EMI: ${money(row.base.emi ?? l.emi)}</span>`;
+          tooltip.style.display = "block";
+          tooltip.style.left = Math.max(8, Math.min(px + 14, plot.clientWidth - 238)) + "px";
+          tooltip.style.top = Math.max(8, Math.min(py + 10, plot.clientHeight - 150)) + "px";
+        });
+        hit.addEventListener("mouseleave", () => {
+          cross.setAttribute("opacity", "0");
+          tooltip.style.display = "none";
+        });
+      }
+
+      function renderLoanDetail(l) {
+        let el = document.getElementById("loanDetail"),
+          payments = db.payments.filter((p) => p.loanId === l.id).sort((a, b) => a.dueDate.localeCompare(b.dueDate)),
+          paid = payments.filter((p) => p.paid),
+          paidEmis = Math.min(l.paidEmis || paid.length, l.totalEmis || paid.length),
+          total = l.totalEmis || 0,
+          remaining = Math.max(0, total - paidEmis),
+          pct = total ? (paidEmis / total) * 100 : 0,
+          bal = effective(l),
+          paidPrincipal = paid.reduce((s, p) => s + (Number(p.principal) || 0), 0),
+          paidInterest = paid.reduce((s, p) => s + (Number(p.interest) || 0), 0),
+          balanceReduction = l.original > 0 ? Math.max(0, Math.min(100, ((l.original - bal) / l.original) * 100)) : 0,
+          chartCirc = 2 * Math.PI * 60,
+          ring = (pct / 100) * chartCirc;
+        let principalPct = paidPrincipal + paidInterest > 0 ? (paidPrincipal / (paidPrincipal + paidInterest)) * 100 : 0;
+        let paymentList = payments.length
+          ? payments
+              .map(
+                (p) =>
+                  `<div class="detail-payment"><div><b>${fmtDate(p.dueDate)}</b><div class="tiny muted">${p.paid ? "Paid " + fmtDate(p.date) : "Upcoming"} · ${p.type || "EMI"}</div></div><div style="text-align:right"><b>${money(p.amount)}</b><div class="${p.paid ? "paid" : "muted"}">${p.paid ? "PAID" : "DUE"}</div></div></div>`,
+              )
+              .join("")
+          : '<div class="empty">No payment records yet.</div>';
+        el.innerHTML = `<div class="loan-detail-head"><button onclick="backToOverview()">← All loans</button><div><div class="eyebrow">Loan details</div><h2 class="loan-detail-title">${esc(l.name)}</h2></div><button style="margin-left:auto" onclick="editLoan('${l.id}')">Edit loan</button></div><div class="detail-metrics"><div class="detail-metric"><small>OUTSTANDING PRINCIPAL</small><strong>${money(bal)}</strong></div><div class="detail-metric"><small>MONTHLY EMI</small><strong>${money(l.emi)}</strong></div><div class="detail-metric"><small>INTEREST RATE</small><strong>${l.rate}%</strong></div><div class="detail-metric"><small>FINAL EMI DATE</small><strong>${fmtDate(l.end)}</strong></div></div><div class="detail-grid"><div class="card"><div class="head"><div><h3>Repayment progress</h3><p>${paidEmis} of ${total} instalments completed</p></div></div><div style="display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap"><svg viewBox="0 0 150 150" style="width:150px;height:150px"><circle cx="75" cy="75" r="60" fill="none" stroke="#efedf8" stroke-width="15"/><circle cx="75" cy="75" r="60" fill="none" stroke="#7357e8" stroke-width="15" stroke-linecap="round" stroke-dasharray="${ring} ${chartCirc - ring}" transform="rotate(-90 75 75)"/><text x="75" y="70" text-anchor="middle" font-size="23" font-weight="850" fill="#20243a">${pct.toFixed(0)}%</text><text x="75" y="89" text-anchor="middle" font-size="9" fill="#747b91">EMIs done</text></svg><div style="min-width:140px"><b>${remaining} EMIs remaining</b><div class="tiny muted" style="margin-top:6px">Scheduled to end ${fmtDate(l.end)}</div><div class="bar" style="margin-top:12px"><span style="width:${pct}%"></span></div><div class="tiny muted">${paidEmis}/${total} completed</div></div></div></div><div class="card"><div class="head"><div><h3>Principal and interest paid</h3><p>From payment records logged in this tracker</p></div></div><div style="font-size:12px;display:flex;justify-content:space-between;margin:15px 0 6px"><b>Principal</b><b>${money(paidPrincipal)}</b></div><div class="bar" style="height:14px"><span style="width:${principalPct}%"></span></div><div style="font-size:12px;display:flex;justify-content:space-between;margin:12px 0 6px"><b>Interest</b><b>${money(paidInterest)}</b></div><div class="bar" style="height:14px"><span style="width:${100 - principalPct}%;background:linear-gradient(90deg,#f2ad4d,#e56f92)"></span></div><div class="detail-metrics" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:16px"><div class="detail-metric"><small>TOTAL RECORDED</small><strong>${money(paidPrincipal + paidInterest)}</strong></div><div class="detail-metric"><small>PRINCIPAL LEFT</small><strong>${money(bal)}</strong></div></div></div></div><div class="card" style="margin-top:14px"><div class="head"><div><h3>Balance reduction</h3><p>Change from original principal to current balance</p></div><b>${balanceReduction.toFixed(1)}%</b></div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span>Original ${money(l.original)}</span><b>Current ${money(bal)}</b></div><div class="bar" style="height:16px"><span style="width:${balanceReduction}%"></span></div><div class="tiny muted">${money(Math.max(0, l.original - bal))} lower than original principal</div></div><div id="foreclosurePanel"></div><div class="card" style="margin-top:14px"><div class="head"><div><h3>Repayment schedule & history</h3><p>Due dates, payment status and amounts for this loan.</p></div></div><div class="detail-payment-list">${paymentList}</div></div>`;
+        renderForeclosure(l);
+      }
+
+      function renderSettings() {
+        document.getElementById("loanSettings").innerHTML =
+          `<table><thead><tr><th>Loan</th><th>Balance</th><th>EMI</th><th>EMIs completed</th><th>End date</th><th></th></tr></thead><tbody>${db.loans.map((l) => `<tr><td><b>${esc(l.name)}</b></td><td>${money(l.balance)}</td><td>${money(l.emi)}</td><td>${l.paidEmis || 0}/${l.totalEmis || 0}</td><td>${fmtDate(l.end)}</td><td><button onclick="editLoan('${l.id}')">Edit</button></td></tr>`).join("")}</tbody></table>`;
+      }
+      function renderCashflow() {
+        let regular = monthly(),
+          el = document.getElementById("cashflowBreakdown");
+        if (el) el.innerHTML = `<div style="display:flex;justify-content:space-between;font-size:12px;margin:8px 0"><span>Monthly loan EMIs</span><b>${money(regular)}</b></div><div class="bar"><span style="width:100%"></span></div><p class="tiny muted"></p>`;
+      }
+      function render() {
+        document.getElementById("debt").textContent = money(debt());
+        document.getElementById("debtNote").textContent = active().length + " active loans";
+        document.getElementById("monthly").textContent = money(monthly());
+        document.getElementById("monthlyNote").textContent = "";
+        renderLoans();
+        renderTarget();
+        renderChart();
+        renderUpcoming();
+        renderMonthStats();
+        renderChecklist();
+        renderAnalytics();
+        renderKitty();
+        renderHistory();
+        renderSettings();
+        renderCashflow();
+      }
+      function modal(title, html) {
+        document.getElementById("modalTitle").textContent = title;
+        document.getElementById("modalBody").innerHTML = html;
+        document.getElementById("modalback").style.display = "flex";
+      }
+      function closeModal() {
+        document.getElementById("modalback").style.display = "none";
+      }
+      function kittyForm() {
+        modal(
+          "Add to Loan Kitty",
+          `<form id="kittyForm"><div class="field"><label>Contribution amount (₹)</label><input name="amount" type="number" min="1" step="1" required></div><div class="field"><label>Date</label><input name="date" type="date" value="${today()}" required></div><div class="field"><label>Note (optional)</label><input name="note" placeholder="Extra income, savings..."></div><button class="primary">Save contribution</button></form>`,
+        );
+        document.getElementById("kittyForm").onsubmit = (e) => {
+          e.preventDefault();
+          let f = new FormData(e.target),
+            amount = Number(f.get("amount"));
+          db.kitty.push({ id: "id-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8), amount, date: f.get("date"), note: f.get("note") });
+          save();
+          closeModal();
+          toast("Kitty contribution recorded");
+        };
+      }
+      function togglePaid(id, checked) {
+        let p = db.payments.find((x) => x.id === id);
+        if (!p) return;
+        if (checked && !p.paid) {
+          let l = db.loans.find((x) => x.id === p.loanId),
+            split = principalEstimate(l, p.amount);
+          p.paid = true;
+          p.date = p.dueDate;
+          p.principal = split.principal;
+          p.interest = split.interest;
+          p.onTime = true;
+        } else if (!checked) {
+          if (!confirm("Undo this payment and reverse its recorded principal reduction?")) {
+            render();
+            return;
+          }
+          p.paid = false;
+          p.date = null;
+          p.principal = null;
+          p.interest = null;
+          p.onTime = false;
+        }
+        save();
+      }
+      function undoKitty(id) {
+        if (!confirm("Remove this Kitty contribution?")) return;
+        db.kitty = db.kitty.filter((x) => x.id !== id);
+        save();
+      }
+      function editPayment(id) {
+        let p = db.payments.find((x) => x.id === id);
+        if (!p) return;
+        modal(
+          "Edit payment",
+          `<form id="editPay"><div class="field"><label>Actual paid date</label><input type="date" name="date" value="${p.date || today()}" required></div><div class="field"><label>Amount (₹)</label><input type="number" name="amount" value="${p.amount}" min="0" step=".01" required></div><div class="formgrid"><div class="field"><label>Principal component (₹)</label><input type="number" name="principal" value="${p.principal ?? ""}" min="0" step=".01"></div><div class="field"><label>Interest component (₹)</label><input type="number" name="interest" value="${p.interest ?? ""}" min="0" step=".01"></div></div><button class="primary">Save changes</button></form>`,
+        );
+        document.getElementById("editPay").onsubmit = (e) => {
+          e.preventDefault();
+          let f = new FormData(e.target);
+          p.date = f.get("date");
+          p.amount = Number(f.get("amount"));
+          p.principal = f.get("principal") === "" ? null : Number(f.get("principal"));
+          p.interest = f.get("interest") === "" ? null : Number(f.get("interest"));
+          p.onTime = p.date <= p.dueDate;
+          save();
+          closeModal();
+        };
+      }
+      function manualPayment() {
+        modal(
+          "Add payment record",
+          `<form id="manual"><div class="field"><label>Loan</label><select name="loanId">${active()
+            .map((l) => `<option value="${l.id}">${esc(l.name)}</option>`)
+            .join(
+              "",
+            )}</select></div><div class="field"><label>Paid date</label><input type="date" name="date" value="${today()}" required></div><div class="field"><label>Amount (₹)</label><input type="number" name="amount" min="1" step=".01" required></div><div class="formgrid"><div class="field"><label>Principal (optional)</label><input type="number" name="principal" min="0" step=".01"></div><div class="field"><label>Interest (optional)</label><input type="number" name="interest" min="0" step=".01"></div></div><button class="primary">Save payment</button></form>`,
+        );
+        document.getElementById("manual").onsubmit = (e) => {
+          e.preventDefault();
+          let f = new FormData(e.target),
+            l = db.loans.find((x) => x.id === f.get("loanId")),
+            split = principalEstimate(l, Number(f.get("amount")));
+          let pr = f.get("principal") === "" ? split.principal : Number(f.get("principal")),
+            intr = f.get("interest") === "" ? split.interest : Number(f.get("interest"));
+          db.payments.push({ id: "id-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8), loanId: l.id, date: f.get("date"), dueDate: f.get("date"), amount: Number(f.get("amount")), principal: pr, interest: intr, type: "Manual payment", paid: true, onTime: true });
+          save();
+          closeModal();
+          toast("Payment record added");
+        };
+      }
+      function editLoan(id) {
+        let l = db.loans.find((x) => x.id === id);
+        modal(
+          "Edit " + l.name,
+          `<form id="loanEdit"><div class="field"><label>Current outstanding principal (₹)</label><input name="balance" type="number" value="${l.balance}" min="0" step=".01" required></div><div class="field"><label>Monthly EMI / deduction (₹)</label><input name="emi" type="number" value="${l.emi}" min="0" step=".01" required></div><div class="formgrid"><div class="field"><label>Annual interest rate (%)</label><input name="rate" type="number" value="${l.rate}" min="0" step=".01" required></div><div class="field"><label>Due day</label><input name="day" type="number" value="${l.dueDay}" min="1" max="31" required></div><div class="field"><label>Total EMIs</label><input name="totalEmis" type="number" value="${l.totalEmis || 0}" min="1" required></div><div class="field"><label>EMIs completed</label><input name="paidEmis" type="number" value="${l.paidEmis || 0}" min="0" required></div><div class="field wide"><label>Final EMI date</label><input name="end" type="date" value="${l.end || ""}" required></div></div><button class="primary">Save loan details</button></form>`,
+        );
+        document.getElementById("loanEdit").onsubmit = (e) => {
+          e.preventDefault();
+          let f = new FormData(e.target);
+          l.balance = Number(f.get("balance"));
+          l.emi = Number(f.get("emi"));
+          l.rate = Number(f.get("rate"));
+          l.dueDay = Number(f.get("day"));
+          l.totalEmis = Number(f.get("totalEmis"));
+          l.paidEmis = Number(f.get("paidEmis"));
+          l.end = f.get("end");
+          save();
+          closeModal();
+          if (document.body.classList.contains("loan-detail-mode")) renderLoanDetail(l);
+        };
+      }
+      function exportData() {
+        let a = document.createElement("a"),
+          url = URL.createObjectURL(new Blob([JSON.stringify(db, null, 2)], { type: "application/json" }));
+        a.href = url;
+        a.download = "project-zero-backup-" + today() + ".json";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+      function importData(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async () => {
+          try {
+            db = validateState(JSON.parse(reader.result));
+            db.monthCursor = currentMonth();
+            scheduleMonth(db.monthCursor);
+            if (!(await save())) throw new Error("The backup was read, but could not be saved to Supabase. Your backup file is unchanged; check the cloud status and try again.");
+            document.getElementById("loadGate").classList.add("hide");
+            render();
+            toast("Your data is now saved in Supabase");
+          } catch (error) {
+            console.error("Could not migrate Project Zero backup.", error);
+            setGate("Could not migrate this backup", error.message, true, "Choose a valid Project Zero JSON backup. Nothing has been removed from the backup file.");
+          }
+        };
+        reader.onerror = () => setGate("Could not read this backup", "Your browser could not read that file. Try selecting the backup again.", true);
+        reader.readAsText(file);
+      }
+      async function initializeCloud() {
+        if (!configured()) {
+          setCloudStatus("Supabase URL/key not configured", true);
+          setGate(
+            "Connect Project Zero to Supabase",
+            "Add your Supabase project URL and publishable (anon) key in the two configuration constants in this HTML, then publish the updated page.",
+            false,
+            "Never use a service-role key here. The selected no-login setup makes records publicly accessible.",
+          );
+          return;
+        }
+        try {
+          const state = await loadCloudState();
+          if (!state) {
+            setCloudStatus("Cloud is ready for one-time setup");
+            setGate(
+              "Move your existing data to the cloud",
+              "Choose your current Project Zero JSON file once to transfer its loans, payment checklist, kitty entries, and history into Supabase. After this migration, the app loads and saves automatically.",
+              true,
+              "This one-time upload is needed because the app no longer contains your personal records.",
+            );
+            return;
+          }
+          db = validateState(state);
+          db.monthCursor = currentMonth();
+          const addedCurrentChecklist = scheduleMonth(db.monthCursor);
+          render();
+          document.getElementById("loadGate").classList.add("hide");
+          if (addedCurrentChecklist) await save();
+          else setCloudStatus("Loaded from cloud");
+        } catch (error) {
+          console.error("Could not load Project Zero from Supabase.", error);
+          setCloudStatus(`Could not connect: ${error.message}`, true);
+          setGate("Could not connect to Supabase", error.message, false, "Check the project URL/key, SQL table and policies. The app will not replace cloud data with a local default.");
+        }
+      }
+      let db = null,
+        activeLoanDetailId = null;
+      let chartResizeTimer;
+      window.addEventListener("resize", () => {
+        clearTimeout(chartResizeTimer);
+        chartResizeTimer = setTimeout(() => {
+          if (!db) return;
+          renderChart();
+          if (activeLoanDetailId) {
+            const loan = db.loans.find((l) => l.id === activeLoanDetailId);
+            if (loan) renderForeclosure(loan, Number(document.getElementById("savedAmount")?.value) || 0);
+          }
+        }, 120);
+      });
+      document.getElementById("loadBackupButton").onclick = () => document.getElementById("restoreFile").click();
+      document.getElementById("restoreFile").onchange = (e) => {
+        importData(e.target.files[0]);
+        e.target.value = "";
+      };
+      document.querySelectorAll(".tab").forEach(
+        (b) =>
+          (b.onclick = () => {
+            activeLoanDetailId = null;
+            document.body.classList.remove("loan-detail-mode");
+            document.querySelectorAll(".tab").forEach((x) => x.classList.toggle("active", x === b));
+            document.querySelectorAll(".view").forEach((x) => x.classList.toggle("active", x.id === "view-" + b.dataset.view));
+            render();
+          }),
+      );
+      document.getElementById("addKitty").onclick = kittyForm;
+      document.getElementById("kittyAdd2").onclick = kittyForm;
+      document.getElementById("manualPayment").onclick = manualPayment;
+      document.getElementById("editLoans").onclick = () => {
+        let tab = document.querySelector('[data-view="settings"]');
+        tab.click();
+        document.getElementById("view-settings").scrollIntoView({ behavior: "smooth", block: "start" });
+      };
+      document.getElementById("prev").onclick = () => {
+        let [y, m] = db.monthCursor.split("-").map(Number);
+        m--;
+        if (m < 1) {
+          m = 12;
+          y--;
+        }
+        let next = `${y}-${String(m).padStart(2, "0")}`;
+        db.monthCursor = next;
+        save();
+      };
+      document.getElementById("next").onclick = () => {
+        let [y, m] = db.monthCursor.split("-").map(Number);
+        m++;
+        if (m > 12) {
+          m = 1;
+          y++;
+        }
+        db.monthCursor = `${y}-${String(m).padStart(2, "0")}`;
+        save();
+      };
+      document.getElementById("export").onclick = exportData;
+      document.getElementById("closeModal").onclick = closeModal;
+      document.getElementById("modalback").onclick = (e) => {
+        if (e.target.id === "modalback") closeModal();
+      };
+      initializeCloud();
+    </script>
+  </body>
+</html>
+
+<style>
+  /* Project Zero graph palette: slate for the baseline, violet for the kitty scenario */
+  .forecast-legend i {
+    width: 18px;
+    height: 3px;
+    border-radius: 99px;
+    vertical-align: middle;
+  }
+  .forecast-plot {
+    background: linear-gradient(180deg, #ffffff 0%, #f8f9fc 100%);
+    border-color: #e6e9f0;
+  }
+  .forecast-chart .plot-hit circle {
+    stroke: none;
+  }
+
+  :root {
+    --bg: #f4f6fb;
+    --paper: #fff;
+    --ink: #202638;
+    --muted: #687287;
+    --line: #e4e8f0;
+    --purple: #6854d9;
+    --purple2: #f0edff;
+    --green: #198361;
+    --shadow: 0 6px 22px rgba(32, 38, 56, 0.055);
+    --r: 18px;
+  }
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family:
+      Inter,
+      "Segoe UI Variable",
+      "Segoe UI",
+      Aptos,
+      system-ui,
+      -apple-system,
+      sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app {
+    width: min(100%, 1440px);
+    padding: clamp(16px, 2.4vw, 32px) clamp(14px, 3vw, 36px) 56px;
+  }
+  .top {
+    margin-bottom: 20px;
+  }
+  .brand {
+    gap: 14px;
+  }
+  .brand h1 {
+    font-size: 18px;
+    letter-spacing: 0.11em;
+  }
+  .brand p {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+  }
+  .logo {
+    border-radius: 14px;
+    background: linear-gradient(145deg, #8575ef, #5e49cc);
+    box-shadow: 0 6px 16px #6854d926;
+  }
+  button {
+    min-height: 42px;
+    padding: 9px 14px;
+    border-radius: 11px;
+    font-weight: 650;
+    transition:
+      background-color 0.16s ease,
+      border-color 0.16s ease,
+      color 0.16s ease,
+      box-shadow 0.16s ease,
+      transform 0.16s ease;
+  }
+  button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(32, 38, 56, 0.1);
+  }
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  .tab:focus-visible {
+    outline: 3px solid #a99cf4;
+    outline-offset: 2px;
+  }
+  button.primary {
+    background: var(--purple);
+    border-color: var(--purple);
+  }
+  button.primary:hover {
+    background: #5844c5;
+  }
+  .actions {
+    gap: 9px;
+  }
+  .card,
+  .stat {
+    border-color: var(--line);
+    box-shadow: var(--shadow);
+  }
+  .card {
+    padding: clamp(16px, 2vw, 22px);
+    border-radius: var(--r);
+  }
+  .stats {
+    gap: 12px;
+  }
+  .sticky-stats {
+    padding: 8px 0 11px;
+    background: rgba(244, 246, 251, 0.94);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 16px -16px #202638;
+  }
+  .sticky-stats .stat {
+    padding: 13px 18px;
+  }
+  .stat label {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+  .stat strong {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.035em;
+  }
+  .stat small,
+  .head p,
+  .loan-meta,
+  .tiny {
+    line-height: 1.5;
+  }
+  .layout {
+    grid-template-columns: minmax(0, 1.55fr) minmax(290px, 0.78fr);
+    gap: 18px;
+  }
+  .head {
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .head h3 {
+    font-size: 16px;
+    font-weight: 750;
+    letter-spacing: -0.015em;
+  }
+  .head p {
+    font-size: 12px;
+  }
+  .head > button {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .loan-list {
+    gap: 11px;
+  }
+  .loan {
+    padding: 15px;
+    border-color: #e7e9f1;
+    border-radius: 15px;
+    background: #fff;
+    transition:
+      border-color 0.16s ease,
+      box-shadow 0.16s ease,
+      transform 0.16s ease;
+  }
+  .loan:hover {
+    border-color: #c8bff4;
+    box-shadow: 0 7px 20px rgba(60, 48, 125, 0.07);
+    transform: translateY(-1px);
+  }
+  .loan h4 {
+    font-size: 14px;
+    letter-spacing: -0.01em;
+  }
+  .loan-meta {
+    font-size: 12px;
+  }
+  .loan-balance {
+    font-size: 17px;
+    font-variant-numeric: tabular-nums;
+  }
+  .loan-foot {
+    font-size: 11px;
+  }
+  .bar {
+    background: #eeeff5;
+  }
+  .target {
+    background: #faf9ff;
+    border-color: #e9e5fb;
+  }
+  .target .big {
+    font-size: 27px;
+    font-variant-numeric: tabular-nums;
+  }
+  .tabs {
+    gap: 6px;
+    margin: 18px 0 15px;
+    padding: 5px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #fff;
+    scrollbar-width: thin;
+  }
+  .tab {
+    min-height: 40px;
+    padding: 8px 13px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 650;
+  }
+  .tab.active {
+    background: var(--purple2);
+    border-color: transparent;
+    color: #5945c4;
+  }
+  .two,
+  .three {
+    gap: 16px;
+  }
+  .chart {
+    max-width: 100%;
+    height: auto;
+    min-height: 190px;
+  }
+  .donut-wrap {
+    gap: 18px;
+  }
+  .check {
+    min-height: 64px;
+    border-color: var(--line);
+    background: #fff;
+  }
+  .check-main b {
+    font-size: 13px;
+  }
+  .check-main span,
+  .check-amount small {
+    font-size: 11px;
+  }
+  .field label {
+    font-size: 12px;
+  }
+  .field input,
+  .field select {
+    min-height: 44px;
+    border-color: #dfe3ec;
+    border-radius: 10px;
+  }
+  .tablewrap,
+  .forecast-table-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  th,
+  td {
+    font-size: 12px;
+  }
+  th {
+    letter-spacing: 0.02em;
+  }
+  .modal {
+    border: 1px solid var(--line);
+    border-radius: 18px;
+  }
+  .load-panel {
+    border-color: var(--line);
+    border-radius: 20px;
+  }
+  .load-panel p {
+    font-size: 14px;
+  }
+  .load-note {
+    font-size: 12px !important;
+  }
+  .forecast-metric {
+    border-radius: 13px;
+  }
+  .forecast-metric .metric-label {
+    font-size: 11px;
+  }
+  .forecast-input {
+    border-color: #e4dffc;
+  }
+  .toast {
+    max-width: calc(100vw - 28px);
+    text-align: center;
+  }
+  .loan-detail-mode #view-loandetail {
+    padding: 0 4px;
+  }
+  .loan-detail-mode .app {
+    max-width: 1180px;
+  }
+
+  @media (max-width: 980px) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 760px) {
+    .app {
+      padding: 16px 18px 44px;
+    }
+    .two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .detail-metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .forecast-metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .tabs {
+      position: relative;
+      max-width: 100%;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+    }
+    .tab {
+      flex: 0 0 auto;
+    }
+  }
+  @media (max-width: 620px) {
+    body {
+      font-size: 14px;
+    }
+    .app {
+      padding: 14px 13px 38px;
+    }
+    .top {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .actions {
+      display: grid;
+      width: 100%;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+    }
+    .actions button {
+      min-width: 0;
+      padding: 9px 7px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .sticky-stats {
+      top: 0;
+      gap: 8px;
+      padding: 7px 0 9px;
+    }
+    .sticky-stats .stat {
+      padding: 11px 12px;
+      border-radius: 14px;
+    }
+    .sticky-stats .stat strong {
+      font-size: clamp(18px, 5vw, 25px);
+    }
+    .stat label {
+      font-size: 9px;
+      letter-spacing: 0.055em;
+    }
+    .stat small {
+      font-size: 10px;
+    }
+    .layout {
+      gap: 12px;
+    }
+    .card {
+      padding: 15px;
+      border-radius: 16px;
+    }
+    .head {
+      gap: 8px;
+    }
+    .head h3 {
+      font-size: 15px;
+    }
+    .head p {
+      font-size: 11px;
+    }
+    .loan {
+      padding: 13px;
+    }
+    .loan-top {
+      gap: 8px;
+    }
+    .loan-balance {
+      font-size: 16px;
+    }
+    .loan-foot {
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .tabs {
+      margin: 14px 0 12px;
+      padding: 4px;
+    }
+    .tab {
+      min-height: 38px;
+      padding: 7px 11px;
+      font-size: 12px;
+    }
+    .two,
+    .three {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+    }
+    .chart {
+      min-height: 160px;
+    }
+    .donut-wrap {
+      gap: 12px;
+    }
+    .check {
+      gap: 9px;
+      padding: 10px;
+    }
+    .check-amount {
+      font-size: 12px;
+    }
+    .formgrid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .wide {
+      grid-column: auto;
+    }
+    .detail-metrics {
+      gap: 8px;
+    }
+    .detail-metric {
+      padding: 10px;
+    }
+    .detail-metric strong {
+      font-size: 16px;
+    }
+    .forecast-input {
+      padding: 13px;
+    }
+    .forecast-input-main {
+      gap: 8px;
+    }
+    .kitty-ring {
+      width: 108px;
+      flex-basis: 108px;
+    }
+    .kitty-ring svg {
+      width: 92px;
+      height: 92px;
+      flex-basis: 92px;
+    }
+    .kitty-closure-date strong {
+      font-size: 12px;
+      white-space: normal;
+    }
+    .forecast-metric {
+      padding: 10px;
+    }
+    .forecast-metric strong {
+      font-size: 15px;
+    }
+    .modalback {
+      align-items: flex-end;
+      padding: 8px;
+    }
+    .modal {
+      width: 100%;
+      max-height: 88vh;
+      padding: 17px;
+      border-radius: 18px 18px 12px 12px;
+    }
+    .load-panel {
+      padding: 22px;
+    }
+    .load-panel h2 {
+      font-size: 22px;
+    }
+  }
+  @media (max-width: 380px) {
+    .app {
+      padding-right: 10px;
+      padding-left: 10px;
+    }
+    .actions {
+      gap: 5px;
+    }
+    .actions button {
+      padding: 8px 4px;
+      font-size: 11px;
+    }
+    .sticky-stats .stat {
+      padding: 10px;
+    }
+    .stat label {
+      font-size: 8px;
+    }
+    .forecast-metrics {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+  body {
+    font-family:
+      "Rubik",
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
+    font-kerning: normal;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  button,
+  label {
+    letter-spacing: -0.01em;
+  }
+  input,
+  select,
+  button {
+    font-family: inherit;
+  }
+  .stat strong,
+  .loan-balance,
+  .target .big,
+  .detail-metric strong,
+  .forecast-metric strong {
+    font-variant-numeric: tabular-nums;
+  }
+  #debtChart {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    display: block;
+    overflow: visible;
+  }
+  #debtChart text {
+    font-family: inherit;
+  }
+  #debtChart .debt-grid {
+    stroke: #e9ecf3;
+    stroke-width: 1;
+    stroke-dasharray: 3 5;
+  }
+  #debtChart .debt-axis {
+    fill: #798398;
+    font-size: 12px;
+    font-weight: 550;
+  }
+  #debtChart .debt-date {
+    fill: #778196;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  #debtChart .debt-caption {
+    fill: #7b8498;
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: 1px;
+  }
+  #debtChart .debt-line {
+    fill: none;
+    stroke: #6854d9;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  #debtChart .debt-point {
+    fill: #fff;
+    stroke: #6854d9;
+    stroke-width: 2.5;
+  }
+  #debtChart .debt-point-current {
+    fill: #6854d9;
+    stroke: #fff;
+    stroke-width: 3;
+  }
+  #debtChart .debt-point-label {
+    fill: #4938ae;
+    font-size: 12px;
+    font-weight: 750;
+  }
+  #debtChart .debt-trend {
+    stroke-width: 1;
+  }
+  #debtChart .debt-trend-down {
+    fill: #e9f7f1;
+    stroke: #c6eadb;
+  }
+  #debtChart .debt-trend-up {
+    fill: #fff1f0;
+    stroke: #f2d5d2;
+  }
+  #debtChart .debt-trend-steady {
+    fill: #f1f2f6;
+    stroke: #e2e5ec;
+  }
+  #debtChart .debt-trend-label {
+    fill: #287457;
+    font-size: 12px;
+    font-weight: 750;
+  }
+  #debtChart .debt-trend-up + .debt-trend-label {
+    fill: #a64b45;
+  }
+  #chartNote {
+    margin: 2px 0 0;
+    font-size: 11px;
+  }
+  .forecast-plot {
+    background: #fbfcfe;
+    border-color: #e7eaf1;
+    box-shadow: none;
+    padding: 12px;
+  }
+  .forecast-chart {
+    min-height: 0;
+    max-height: none;
+  }
+  .forecast-chart text {
+    font-family: inherit;
+  }
+  .forecast-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .forecast-legend span[hidden] {
+    display: none;
+  }
+  .forecast-hint {
+    color: #7b8498;
+  }
+  .forecast-plot {
+    overflow: hidden;
+  }
+  .forecast-chart {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+  }
+  .forecast-chart text {
+    font-variant-numeric: tabular-nums;
+  }
+  .forecast-caption {
+    fill: #7b8498;
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: 1px;
+  }
+  .projection-badge {
+    fill: #e9f7f1;
+    stroke: #c6eadb;
+  }
+  .projection-badge-text {
+    fill: #287457;
+    font-size: 11px;
+    font-weight: 750;
+  }
+  .projection-endpoint text {
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .projection-endpoint line {
+    stroke-width: 1;
+  }
+  .forecast-chart .plot-hit {
+    cursor: crosshair;
+  }
+  .forecast-chart .plot-hit circle {
+    vector-effect: non-scaling-stroke;
+  }
+  .chart,
+  .detail-chart,
+  #debtChart,
+  .donut-wrap {
+    max-width: 100%;
+    min-width: 0;
+  }
+  @media (max-width: 620px) {
+    .forecast-plot {
+      overflow: hidden;
+    }
+    .forecast-chart {
+      min-width: 0;
+    }
+    .chart,
+    .detail-chart,
+    #debtChart {
+      max-width: 100%;
+      height: auto;
+    }
+    .donut-wrap {
+      overflow: hidden;
+    }
+  }
+  body {
+    font-weight: 400;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 600;
+  }
+  b,
+  strong {
+    font-weight: 500;
+  }
+  button {
+    font-weight: 500;
+  }
+  button.primary {
+    font-weight: 600;
+  }
+  .logo {
+    font-weight: 700;
+  }
+  .eyebrow,
+  .stat label,
+  .field label,
+  .detail-metric small,
+  .kitty-closure-date span {
+    font-weight: 500;
+  }
+  .head h3 {
+    font-weight: 600;
+  }
+  .loan h4,
+  .forecast-metric .metric-label {
+    font-weight: 500;
+  }
+  .loan-balance,
+  .stat strong,
+  .target .big,
+  .detail-metric strong,
+  .forecast-metric strong {
+    font-weight: 600;
+  }
+  .tag,
+  th,
+  .toast,
+  .metric-after,
+  .metric-result,
+  .projection-badge-text,
+  #debtChart .debt-trend-label {
+    font-weight: 600;
+  }
+  .check-amount,
+  .detail-payment .paid,
+  .kitty-closure-date strong,
+  .kitty-closure-date .date-after,
+  .kitty-closure-date .date-saved {
+    font-weight: 600;
+  }
+  .forecast-input input {
+    font-weight: 600;
+  }
+  .info-tip,
+  .kitty-ring-percent {
+    font-weight: 600;
+  }
+  .kitty-ring-label {
+    font-weight: 600;
+  }
+  .projection-endpoint text {
+    font-weight: 600;
+  }
+  #debtChart .debt-caption,
+  #debtChart .debt-point-label {
+    font-weight: 600;
+  }
+  #debtChart .debt-date,
+  #debtChart .debt-trend-label,
+  .forecast-caption {
+    font-weight: 600;
+  }
+  .tab,
+  .metric-before,
+  .kitty-closure-date .date-before,
+  #debtChart .debt-axis {
+    font-weight: 500;
+  }
+  :root {
+    --green: #668271;
+    --red: #a9787d;
+  }
+  h3 {
+    font-weight: 500;
+  }
+  b,
+  strong {
+    font-weight: 500;
+  }
+  button.primary {
+    font-weight: 500;
+  }
+  .stat strong,
+  .loan-balance,
+  .target .big,
+  .detail-metric strong,
+  .forecast-metric strong {
+    font-weight: 600;
+  }
+  .tag,
+  .toast,
+  .metric-after,
+  .metric-result,
+  .check-amount,
+  .detail-payment .paid,
+  .kitty-closure-date strong,
+  .kitty-closure-date .date-after,
+  .kitty-closure-date .date-saved,
+  .projection-badge-text,
+  #debtChart .debt-trend-label {
+    font-weight: 500;
+  }
+  .metric-before,
+  .kitty-closure-date .date-before {
+    color: #8f7474;
+    text-decoration-color: #c6a9a9;
+    font-weight: 400;
+  }
+  .metric-after,
+  .metric-result,
+  .kitty-closure-date .date-saved {
+    color: #698574;
+  }
+  .kitty-closure-date .date-after {
+    color: #536f60;
+  }
+  .detail-payment .paid {
+    color: #668271;
+  }
+  .forecast-progress span {
+    background: linear-gradient(90deg, #8578cf, #83a993);
+  }
+  .forecast-metric .metric-label {
+    font-size: 11px;
+  }
+  .tiny,
+  .loan-meta,
+  .loan-foot,
+  .detail-payment,
+  th,
+  td,
+  .field label,
+  .stat label,
+  .kitty-closure-date span {
+    font-size: 12px;
+  }
+  .loan-foot,
+  .tiny {
+    font-weight: 400;
+  }
+  .forecast-table-wrap {
+    position: relative;
+    overscroll-behavior: contain;
+  }
+  .forecast-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #fff;
+    box-shadow: 0 1px 0 var(--line);
+    font-weight: 500;
+  }
+  .forecast-table tbody tr:nth-child(even) {
+    background: #fafbfc;
+  }
+  .projection-endpoint text {
+    font-weight: 500;
+  }
+  #debtChart .debt-date,
+  #debtChart .debt-axis {
+    font-weight: 400;
+  }
+  .detail-grid svg text[font-weight="850"] {
+    font-weight: 600;
+  }
+  @media (max-width: 620px) {
+    .tiny,
+    .loan-meta,
+    .loan-foot,
+    .detail-payment,
+    th,
+    td,
+    .field label,
+    .stat label,
+    .kitty-closure-date span {
+      font-size: 11px;
+    }
+    .forecast-table thead th {
+      font-size: 11px;
+    }
+  }
+</style>
