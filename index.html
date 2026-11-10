@@ -1266,7 +1266,7 @@
       </header>
       <section class="stats sticky-stats">
         <div class="stat"><label>DEBT REMAINING</label><strong id="debt">₹0</strong><small id="debtNote">7 active loans</small></div>
-        <div class="stat"><label>REGULAR LOAN EMIs</label><strong id="monthly">₹0</strong><small id="monthlyNote">Monthly EMIs across six active loans</small></div>
+        <div class="stat"><label>EMIs REMAINING THIS MONTH</label><strong id="monthly">₹0</strong><small id="monthlyNote">Unpaid scheduled deductions</small></div>
       </section>
       <section class="layout">
         <div class="card">
@@ -1476,6 +1476,13 @@
       }
       function monthly() {
         return n2(active().reduce((a, l) => a + l.emi, 0));
+      }
+      function monthlyRemaining() {
+        const unpaid = monthRows(db.monthCursor).filter((p) => !p.paid);
+        return {
+          amount: n2(unpaid.reduce((sum, p) => sum + Number(p.amount || 0), 0)),
+          count: unpaid.length,
+        };
       }
       function fmtDate(d) {
         return d ? new Date(d + "T12:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—";
@@ -2020,8 +2027,11 @@
       function render() {
         document.getElementById("debt").textContent = money(debt());
         document.getElementById("debtNote").textContent = active().length + " active loans";
-        document.getElementById("monthly").textContent = money(monthly());
-        document.getElementById("monthlyNote").textContent = "";
+        const remaining = monthlyRemaining();
+        document.getElementById("monthly").textContent = money(remaining.amount);
+        document.getElementById("monthlyNote").textContent = remaining.count
+          ? `${remaining.count} unpaid EMI${remaining.count === 1 ? "" : "s"} · ${monthName(db.monthCursor)}`
+          : `All scheduled EMIs paid · ${monthName(db.monthCursor)}`;
         renderLoans();
         renderTarget();
         renderChart();
