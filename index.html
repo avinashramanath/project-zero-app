@@ -1266,7 +1266,7 @@
       </header>
       <section class="stats sticky-stats">
         <div class="stat"><label>DEBT REMAINING</label><strong id="debt">₹0</strong><small id="debtNote">7 active loans</small></div>
-        <div class="stat"><label>EMIs REMAINING THIS MONTH</label><strong id="monthly">₹0</strong><small id="monthlyNote">Unpaid scheduled deductions</small></div>
+        <div class="stat"><label>UNPAID EMIs</label><strong id="monthly">₹0</strong><small id="monthlyNote">Due dates</small></div>
       </section>
       <section class="layout">
         <div class="card">
@@ -1479,9 +1479,17 @@
       }
       function monthlyRemaining() {
         const unpaid = monthRows(db.monthCursor).filter((p) => !p.paid);
+        const dueDates = [...new Set(unpaid.map((p) => p.dueDate))]
+          .sort()
+          .map((date) => {
+            const label = new Date(date + "T12:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+            const count = unpaid.filter((p) => p.dueDate === date).length;
+            return count > 1 ? `${label} ×${count}` : label;
+          });
         return {
           amount: n2(unpaid.reduce((sum, p) => sum + Number(p.amount || 0), 0)),
           count: unpaid.length,
+          dueDates,
         };
       }
       function fmtDate(d) {
@@ -2030,8 +2038,8 @@
         const remaining = monthlyRemaining();
         document.getElementById("monthly").textContent = money(remaining.amount);
         document.getElementById("monthlyNote").textContent = remaining.count
-          ? `${remaining.count} unpaid EMI${remaining.count === 1 ? "" : "s"} · ${monthName(db.monthCursor)}`
-          : `All scheduled EMIs paid · ${monthName(db.monthCursor)}`;
+          ? `Due ${remaining.dueDates.join(", ")}`
+          : "All paid";
         renderLoans();
         renderTarget();
         renderChart();
